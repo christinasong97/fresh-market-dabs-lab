@@ -8,7 +8,7 @@ LANDING_PATH = spark.conf.get("so.landing_path")
 POS_SCHEMA = """
     transaction_id STRING, store_id INT, product_id INT, transaction_ts TIMESTAMP,
     quantity INT, unit_price DECIMAL(10,2), discount_amount DECIMAL(10,2),
-    total_amount DECIMAL(10,2), payment_type STRING, mperks_member BOOLEAN
+    total_amount DECIMAL(10,2), payment_type STRING, rewards_member BOOLEAN
 """
 
 

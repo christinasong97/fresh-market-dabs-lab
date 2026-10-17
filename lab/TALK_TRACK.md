@@ -76,7 +76,7 @@ by hand.** Each module shows one or two platform features that make that possibl
 - **"Why GitHub? We use Azure DevOps."** The pattern is the same: Azure Pipelines environments with approvals
   replace GitHub environments, and Databricks supports workload identity federation from Azure DevOps.
 - **"Why secrets instead of OIDC in this repo?"** Federation policies are set at the account level. The lab
-  workspace doesn't have account admin; Meijer's should use federation.
+  workspace doesn't have account admin; your production workspaces should use federation.
 - **"Can Genie Code break the rules anyway?"** Yes, it can make mistakes. That's why the rule checks exist: the
   instructions make the right answer likely, and the tests make the wrong one visible.
 - **"What about Agent Bricks?"** There's no bundle resource for Knowledge Assistants yet. Genie spaces, model

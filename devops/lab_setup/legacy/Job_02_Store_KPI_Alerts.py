@@ -7,8 +7,8 @@
 # COMMAND ----------
 
 # Hard-coded for INT. Change these before handing the job to DevOps for CERT and PROD.
-CATALOG = "meijer_lab_int"
-LANDING = "/Volumes/meijer_lab_int/landing/raw"
+CATALOG = "fresh_market_lab_int"
+LANDING = "/Volumes/fresh_market_lab_int/landing/raw"
 THRESHOLD = 85
 
 # COMMAND ----------

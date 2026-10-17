@@ -22,7 +22,7 @@ If you fall behind, switch your Git folder to the catch-up branch listed at the 
 ## Before you start: create your Git folder
 
 1. **Workspace → Create → Git folder.**
-2. URL: `https://github.com/christinasong97/meijer-dabs-lab`, provider **GitHub**. Click **Create Git folder**.
+2. URL: `https://github.com/christinasong97/fresh-market-dabs-lab`, provider **GitHub**. Click **Create Git folder**.
 3. In the Git folder, open the branch picker and switch to **`lab/start`**. Then create your own local branch,
    e.g. `feature/<your-name>`.
 4. Open `databricks.yml`. The editor recognizes the bundle and shows the **Deployments** panel (rocket icon).
@@ -52,7 +52,7 @@ Look around `lab/start`:
 ## Module 1 · From handoff to bundle (10 min)
 
 The job **`Job_02_PL_Store_KPI_Alerts`** was built by hand in INT. Open it from **Jobs & Pipelines** and look at:
-the numbered name, the personal email on failure, and the notebook with `meijer_lab_int` hard-coded.
+the numbered name, the personal email on failure, and the notebook with `fresh_market_lab_int` hard-coded.
 
 **Bring it into your bundle:**
 1. In the Deployments panel, choose **Add existing resource → Job**, pick `Job_02_PL_Store_KPI_Alerts`.
@@ -110,7 +110,7 @@ Catch-up: `lab/03-pipeline`
 ## Module 4 · Your own development target (15 min)
 
 `int`, `cert`, and `prod` are locked to the CI/CD service principal, so only CI can deploy them. The `dev`
-target is what lets you test the real thing yourself. Meijer's current template doesn't have one; this is the
+target is what lets you test the real thing yourself. Your team's current template doesn't have one; this is the
 piece the lab adds.
 
 ```yaml
@@ -120,12 +120,12 @@ targets:
     default: true
     variables:
       environment: dev
-      catalog: meijer_lab_int
+      catalog: fresh_market_lab_int
 ```
 
 1. **Deploy** from the Deployments panel (target `dev`).
 2. Look at what you got: every job is prefixed `[dev <you>]`, schedules are paused, and your tables land in
-   `meijer_lab_int.dev_<you>_store_ops`, so nobody else's work is touched.
+   `fresh_market_lab_int.dev_<you>_store_ops`, so nobody else's work is touched.
 3. Run **`so_orchestrator`**. While it runs, run **`admin_rule_checks`** again. Everything should pass now.
 4. When the orchestrator finishes, open **Store Performance (dev)** and ask **Store Ops Genie (dev)**:
    *Which stores are underperforming right now?*

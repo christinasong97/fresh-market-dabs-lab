@@ -2,7 +2,7 @@ from store_kpi_logic import StorePerformance, classify, flag_underperformers
 
 
 def test_attainment_handles_missing_target():
-    assert StorePerformance(1, "Meijer Holland", "West Michigan", 500.0, 0).attainment_pct == 0.0
+    assert StorePerformance(1, "Fresh Market Holland", "West Michigan", 500.0, 0).attainment_pct == 0.0
 
 
 def test_classify_boundaries():

@@ -4,7 +4,7 @@
       "name": "ds_daily",
       "displayName": "Daily store sales",
       "queryLines": [
-        "SELECT sales_date, store_name, region, state, store_format, net_sales, transaction_count, daily_sales_target, mperks_share ",
+        "SELECT sales_date, store_name, region, state, store_format, net_sales, transaction_count, daily_sales_target, rewards_share ",
         "FROM gold_daily_store_sales"
       ]
     },
@@ -40,7 +40,7 @@
               "lines": [
                 "## Store Performance\n",
                 "\n",
-                "Net sales and target attainment across Meijer stores. Deployed from the **meijer_dabs_lab** bundle."
+                "Net sales and target attainment across Fresh Market stores. Deployed from the **fresh_market_dabs_lab** bundle."
               ]
             }
           },

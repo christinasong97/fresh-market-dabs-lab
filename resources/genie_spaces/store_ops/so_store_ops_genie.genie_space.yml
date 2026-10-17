@@ -15,7 +15,7 @@ resources:
             - id: "10000000000000000000000000000002"
               question: ["How did net sales trend by region over the last 30 days?"]
             - id: "10000000000000000000000000000003"
-              question: ["What share of sales came from mPerks members by store format?"]
+              question: ["What share of sales came from FreshRewards members by store format?"]
         data_sources:
           tables:
             - identifier: ${var.catalog}.${resources.schemas.so_store_ops.name}.gold_daily_store_sales
@@ -27,7 +27,7 @@ resources:
               content:
                 - "gold_daily_store_sales has one row per store per day. net_sales is after discounts. target_attainment_pct = net_sales / daily_sales_target * 100."
                 - "gold_store_alerts is the latest store review list. status is UNDERPERFORMING (below threshold), WATCH (below 100%), or ON_TARGET."
-                - "mperks_share is the fraction of line items bought by mPerks loyalty members (0 to 1)."
+                - "rewards_share is the fraction of line items bought by FreshRewards loyalty members (0 to 1)."
                 - "'Recent' or 'right now' means the last 14 days of sales_date, measured from the latest sales_date in the table."
           example_question_sqls:
             - id: "20000000000000000000000000000001"

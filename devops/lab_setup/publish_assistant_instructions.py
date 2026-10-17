@@ -17,7 +17,7 @@ from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.workspace import ImportFormat
 
 dbutils.widgets.text("source_path", os.path.abspath("../../.assistant_workspace_instructions.md"))
-dbutils.widgets.text("backup_folder", "/Workspace/Shared/meijer_dabs_lab_admin/backups")
+dbutils.widgets.text("backup_folder", "/Workspace/Shared/fresh_market_dabs_lab_admin/backups")
 
 TARGET = "/Workspace/.assistant_workspace_instructions.md"
 source_path = dbutils.widgets.get("source_path")

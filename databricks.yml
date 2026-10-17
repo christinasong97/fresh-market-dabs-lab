@@ -2,7 +2,7 @@
 # Owned by DevOps / platform (see .github/CODEOWNERS). Developers add files under
 # resources/ and src/; they should not need to edit this file.
 bundle:
-  name: meijer_dabs_lab
+  name: fresh_market_dabs_lab
   engine: direct # Required for genie_spaces; also no Terraform dependency.
 
 include:
@@ -22,7 +22,7 @@ targets:
     default: true
     variables:
       environment: dev
-      catalog: meijer_lab_int
+      catalog: fresh_market_lab_int
 
   int:
     mode: production
@@ -37,7 +37,7 @@ targets:
         group_name: users
     variables:
       environment: int
-      catalog: meijer_lab_int
+      catalog: fresh_market_lab_int
 
   cert:
     mode: production
@@ -52,7 +52,7 @@ targets:
         group_name: users
     variables:
       environment: cert
-      catalog: meijer_lab_cert
+      catalog: fresh_market_lab_cert
 
   prod:
     mode: production
@@ -67,4 +67,4 @@ targets:
         group_name: users
     variables:
       environment: prod
-      catalog: meijer_lab_prod
+      catalog: fresh_market_lab_prod
