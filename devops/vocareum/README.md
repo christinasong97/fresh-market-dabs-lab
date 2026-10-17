@@ -5,7 +5,7 @@ Vocareum provisions shared workspaces (about 50 attendees each) and runs our set
 | Vocareum setting | Points to | What happens |
 |---|---|---|
 | `workspace_setup` | `devops/lab_setup/00_lab_setup` | Runs once per workspace, as an admin: catalogs and grants, landing data, `fresh_market_lab_warehouse`, the legacy job, Genie Code instructions |
-| `content.entry` | `00_START_HERE` | The first notebook attendees land on: DABs overview, environment check, and one cell that creates their Git folder on `lab/start` |
+| `content.entry` | `00_START_HERE` | The first notebook attendees land on: DABs overview, setup (a no-op once `workspace_setup` has run), and an environment check |
 
 ## Build the course content
 
