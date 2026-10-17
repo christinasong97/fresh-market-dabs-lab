@@ -6,8 +6,12 @@
 # MAGIC test your own copy, and see how it gets to production through a pull request, automated checks, and an
 # MAGIC approval. Everything happens here in the workspace, with Genie Code. No terminal, no IDE.
 # MAGIC
-# MAGIC **Run this notebook top to bottom.** It explains bundles, checks your environment, and creates your
-# MAGIC working copy of the lab.
+# MAGIC **Before you start:** you should be reading this from **your own Git folder** (created from
+# MAGIC `https://github.com/christinasong97/fresh-market-dabs-lab`), on the **`lab/start`** branch. If you're
+# MAGIC not, create the Git folder first: **Workspace → Create → Git folder**, paste the URL, then switch the
+# MAGIC branch to `lab/start`.
+# MAGIC
+# MAGIC **Then run this notebook top to bottom.** It explains bundles, sets up the lab environment, and checks it.
 # MAGIC
 # MAGIC | Module | What you'll do | Time |
 # MAGIC |---|---|---|
@@ -62,9 +66,21 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Step 1 · Check your environment
+# MAGIC ## Step 1 · Set up the lab environment
 # MAGIC
-# MAGIC Your instructor's setup already created the shared pieces. This cell only **reads**; it changes nothing.
+# MAGIC This runs `devops/lab_setup/00_lab_setup` from your Git folder. It creates everything the lab needs that
+# MAGIC lives **outside** the bundle, and it's safe to run again:
+# MAGIC
+# MAGIC | Creates | Used for |
+# MAGIC |---|---|
+# MAGIC | Catalogs `fresh_market_lab_int`, `_cert`, `_prod` | One catalog per target |
+# MAGIC | `landing.raw` volume with synthetic POS data | The "source system" your pipeline reads |
+# MAGIC | SQL warehouse `fresh_market_lab_warehouse` | Your dashboard and Genie space |
+# MAGIC | Job `Job_02_PL_Store_KPI_Alerts` | The hand-built job you start with in module 1 |
+# MAGIC | `/Workspace/.assistant_workspace_instructions.md` | The DevOps team's rules for Genie Code |
+# MAGIC
+# MAGIC Takes about 3 minutes the first time. **Storage location:** leave the widget at the top blank unless your
+# MAGIC workspace has no default storage (your instructor will tell you if so).
 
 # COMMAND ----------
 
@@ -72,12 +88,37 @@ import os
 
 from databricks.sdk import WorkspaceClient
 
-w = WorkspaceClient()
-me = w.current_user.me().user_name
+dbutils.widgets.text("catalog_storage_root", "", "Storage location (usually blank)")
+
 PREFIX = "fresh_market_lab"
 WAREHOUSE = f"{PREFIX}_warehouse"
 LEGACY_JOB = "Job_02_PL_Store_KPI_Alerts"
 INSTRUCTIONS = "/Workspace/.assistant_workspace_instructions.md"
+
+dbutils.notebook.run(
+    "./devops/lab_setup/00_lab_setup",
+    3600,
+    {
+        "catalog_prefix": PREFIX,
+        "catalog_storage_root": dbutils.widgets.get("catalog_storage_root"),
+        "attendee_principal": "",
+        "cicd_service_principal": "",
+        "warehouse_name": WAREHOUSE,
+        "stage_data": "auto",
+    },
+)
+print("Setup finished. Run the next cell to check it.")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Step 2 · Check your environment
+# MAGIC
+# MAGIC Read-only: confirms each piece from Step 1 is there.
+
+# COMMAND ----------
+
+w = WorkspaceClient()
 
 
 def check(label, fn):
@@ -96,75 +137,19 @@ results = [
     check("SQL warehouse", lambda: next(x.name for x in w.warehouses.list() if x.name == WAREHOUSE)),
     check("Legacy job for module 1", lambda: next(iter(w.jobs.list(name=LEGACY_JOB))).settings.name),
     check("Genie Code team instructions", lambda: w.workspace.get_status(INSTRUCTIONS).path),
+    check("This notebook is in a Git folder", lambda: os.getcwd()),
 ]
 print()
-print(
-    "Ready to go."
-    if all(results)
-    else "Something is missing. Ask your instructor, or see the next cell if you're on Free Edition."
-)
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ### Free Edition only: run the setup yourself
-# MAGIC
-# MAGIC In Vocareum this is done for you. On Free Edition (where you're the workspace admin), set the
-# MAGIC **run_setup** widget at the top of the notebook to `true` and run this cell. It takes about 2 minutes,
-# MAGIC then re-run Step 1. This cell needs the lab repo, so run Step 2 first if you opened this notebook on its own.
-
-# COMMAND ----------
-
-dbutils.widgets.dropdown("run_setup", "false", ["false", "true"], "Free Edition: run setup")
-
-if dbutils.widgets.get("run_setup") == "true":
-    here = os.getcwd()
-    candidates = [
-        f"{here}/devops/lab_setup/00_lab_setup",
-        f"/Workspace/Users/{me}/fresh-market-dabs-lab/devops/lab_setup/00_lab_setup",
-    ]
-    setup = next((p for p in candidates if os.path.exists(p) or os.path.exists(p + ".py")), candidates[-1])
-    print(dbutils.notebook.run(setup, 1800, {"catalog_prefix": PREFIX, "warehouse_name": WAREHOUSE, "attendee_principal": ""}))
-else:
-    print("Skipped (run_setup is false).")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Step 2 · Create your working copy (Git folder)
-# MAGIC
-# MAGIC This creates a **Git folder** in your home folder from the public lab repo, on the `lab/start` branch.
-# MAGIC It's your copy: you can edit and deploy it. It can't push back to GitHub, and it doesn't need to.
-
-# COMMAND ----------
-
-REPO_URL = "https://github.com/christinasong97/fresh-market-dabs-lab"
-REPO_PATH = f"/Workspace/Users/{me}/fresh-market-dabs-lab"
-START_BRANCH = "lab/start"
-
-existing = next((r for r in w.repos.list(path_prefix=REPO_PATH) if r.path.rstrip("/").endswith("fresh-market-dabs-lab")), None)
-if existing:
-    print(f"Your Git folder already exists (branch: {existing.branch}). Leaving it as is.")
-    repo_id = existing.id
-else:
-    repo_id = w.repos.create(url=REPO_URL, provider="gitHub", path=REPO_PATH).id
-    w.repos.update(repo_id, branch=START_BRANCH)
-    print(f"Created your Git folder on branch {START_BRANCH}.")
-
-host = w.config.host.rstrip("/")
-displayHTML(
-    f'<p style="font-size:16px">Open your Git folder: '
-    f'<a href="{host}/browse/folders/{w.workspace.get_status(REPO_PATH).object_id}" target="_blank">{REPO_PATH}</a></p>'
-)
+print("Ready to go." if all(results) else "Something is missing. Re-run Step 1, or ask your instructor.")
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## Step 3 · Start module 1
 # MAGIC
-# MAGIC 1. Open your Git folder (link above) and open **`databricks.yml`**. The **Deployments** panel (rocket icon)
-# MAGIC    appears on the side. That's where you'll validate and deploy all day.
-# MAGIC 2. Open **`lab/LAB_GUIDE.md`** in the same folder. It has every step and every Genie Code prompt.
+# MAGIC 1. In this same Git folder, open **`databricks.yml`**. The **Deployments** panel (rocket icon) appears on
+# MAGIC    the side. That's where you'll validate and deploy all day.
+# MAGIC 2. Open **`lab/LAB_GUIDE.md`**. It has every step and every Genie Code prompt.
 # MAGIC 3. Go to **Jobs & Pipelines** and open **`Job_02_PL_Store_KPI_Alerts`**: the hand-built job you'll start with.
 # MAGIC
 # MAGIC **Fell behind?** In your Git folder's branch picker, switch to the catch-up branch for the module you're on:

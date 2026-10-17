@@ -19,13 +19,15 @@ If you fall behind, switch your Git folder to the catch-up branch listed at the 
 
 ---
 
-## Before you start: create your Git folder
+## Before you start: create your Git folder and run START_HERE
 
 1. **Workspace → Create → Git folder.**
 2. URL: `https://github.com/christinasong97/fresh-market-dabs-lab`, provider **GitHub**. Click **Create Git folder**.
-3. In the Git folder, open the branch picker and switch to **`lab/start`**. Then create your own local branch,
-   e.g. `feature/<your-name>`.
-4. Open `databricks.yml`. The editor recognizes the bundle and shows the **Deployments** panel (rocket icon).
+3. In the Git folder, open the branch picker and switch to **`lab/start`**. Optionally create your own local
+   branch, e.g. `feature/<your-name>`.
+4. Open **`00_START_HERE`** in the Git folder and run it top to bottom. It explains bundles, sets up the lab
+   environment (catalogs, data, warehouse, the legacy job, Genie Code instructions), and checks that it's ready.
+5. Open `databricks.yml`. The editor recognizes the bundle and shows the **Deployments** panel (rocket icon).
 
 > The repo is public and read-only for you: you can branch, edit, and deploy your own copy, but you can't push.
 > That's on purpose. Module 5 shows the push → pull request → production path.

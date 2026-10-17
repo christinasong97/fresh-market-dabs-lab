@@ -5,7 +5,7 @@ built by hand in the workspace, bring it into a bundle, test your own copy, and 
 production through a pull request, automated checks, and an approval gate. All of it happens in the
 Databricks workspace UI with Genie Code.
 
-- **Attendees start here:** open [`00_START_HERE`](00_START_HERE.py) in the workspace and run it top to bottom
+- **Attendees start here:** create a Git folder from this repo on `lab/start`, then open [`00_START_HERE`](00_START_HERE.py) in it and run it top to bottom
 - **Lab guide:** [lab/LAB_GUIDE.md](lab/LAB_GUIDE.md)
 - **Instructor talk track:** [lab/TALK_TRACK.md](lab/TALK_TRACK.md)
 - **Delivering on Vocareum:** [devops/vocareum/README.md](devops/vocareum/README.md)
@@ -34,7 +34,7 @@ Databricks workspace UI with Genie Code.
 ## Layout
 
 ```
-00_START_HERE.py                   # Entry notebook: DABs overview, environment check, creates your Git folder
+00_START_HERE.py                   # Entry notebook: DABs overview, runs lab setup, checks the environment
 databricks.yml                     # Targets, includes (DevOps-owned)
 resources/
   variables/common.vars.yml        # Bundle-wide variables (DevOps-owned)

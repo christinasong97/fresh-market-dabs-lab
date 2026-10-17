@@ -25,14 +25,14 @@ dbutils.widgets.text("catalog_storage_root", "", "Storage root (blank = default 
 dbutils.widgets.text("attendee_principal", "account users", "Attendee group (blank = skip grants)")
 dbutils.widgets.text("cicd_service_principal", "", "CI/CD service principal app ID (blank = skip)")
 dbutils.widgets.text("warehouse_name", "fresh_market_lab_warehouse", "SQL warehouse name")
-dbutils.widgets.dropdown("stage_data", "true", ["true", "false"], "Stage landing data")
+dbutils.widgets.dropdown("stage_data", "auto", ["auto", "true", "false"], "Stage landing data (auto = only if missing)")
 
 prefix = dbutils.widgets.get("catalog_prefix").strip()
 storage_root = dbutils.widgets.get("catalog_storage_root").strip().rstrip("/")
 attendees = dbutils.widgets.get("attendee_principal").strip()
 cicd_sp = dbutils.widgets.get("cicd_service_principal").strip()
 warehouse_name = dbutils.widgets.get("warehouse_name").strip()
-stage_data = dbutils.widgets.get("stage_data") == "true"
+stage_data = dbutils.widgets.get("stage_data")
 
 catalogs = {t: f"{prefix}_{t}" for t in ("int", "cert", "prod")}
 
@@ -72,10 +72,21 @@ for target, catalog in catalogs.items():
 
 # COMMAND ----------
 
-if stage_data:
-    print(dbutils.notebook.run("./stage_landing_data", 1800, {"catalogs": ",".join(catalogs.values())}) or "landing data staged")
+
+
+def has_landing_data(catalog):
+    try:
+        return len(dbutils.fs.ls(f"/Volumes/{catalog}/landing/raw/pos_transactions")) > 0
+    except Exception:  # noqa: BLE001 - folder doesn't exist yet
+        return False
+
+
+missing = [c for c in catalogs.values() if stage_data == "true" or (stage_data == "auto" and not has_landing_data(c))]
+if missing:
+    dbutils.notebook.run("./stage_landing_data", 1800, {"catalogs": ",".join(missing)})
+    print(f"landing data staged: {', '.join(missing)}")
 else:
-    print("skipped")
+    print("landing data already present, skipped")
 
 # COMMAND ----------
 
