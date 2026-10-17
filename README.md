@@ -5,8 +5,10 @@ built by hand in the workspace, bring it into a bundle, test your own copy, and 
 production through a pull request, automated checks, and an approval gate. All of it happens in the
 Databricks workspace UI with Genie Code.
 
+- **Attendees start here:** open [`00_START_HERE`](00_START_HERE.py) in the workspace and run it top to bottom
 - **Lab guide:** [lab/LAB_GUIDE.md](lab/LAB_GUIDE.md)
 - **Instructor talk track:** [lab/TALK_TRACK.md](lab/TALK_TRACK.md)
+- **Delivering on Vocareum:** [devops/vocareum/README.md](devops/vocareum/README.md)
 
 ## What's in the bundle
 
@@ -32,6 +34,7 @@ Databricks workspace UI with Genie Code.
 ## Layout
 
 ```
+00_START_HERE.py                   # Entry notebook: DABs overview, environment check, creates your Git folder
 databricks.yml                     # Targets, includes (DevOps-owned)
 resources/
   variables/common.vars.yml        # Bundle-wide variables (DevOps-owned)
@@ -54,6 +57,7 @@ tests/
 devops/
   checks/run_rule_checks.py        # Runs tests/bundle inside the workspace
   lab_setup/00_lab_setup.py        # Admin-only, run once per workspace: everything outside the bundle
+  vocareum/                        # Vocareum course config and packaging steps
 .github/                           # CI, deploy, CODEOWNERS
 .assistant_workspace_instructions.md  # Genie Code instructions (the team's rules)
 ```
