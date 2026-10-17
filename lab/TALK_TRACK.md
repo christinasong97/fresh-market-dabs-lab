@@ -26,7 +26,7 @@ by hand.** Each module shows one or two platform features that make that possibl
 - Show today's handoff. Ask: *how many of you have had a job behave differently in prod than in INT?*
 - Show the ownership split: DevOps owns `databricks.yml`, variables, CI, and the Genie Code instructions.
   Developers own `resources/` and `src/`.
-- "Everything you'll see follows Prakash's EDAA layout: `*.job.yml` and `*.vars.yml` siblings, domain prefixes,
+- "Everything you'll see follows your DevOps team's bundle layout: `*.job.yml` and `*.vars.yml` siblings, domain prefixes,
   an orchestrator instead of `Job_00/01/02`, expectations next to the pipeline code."
 
 ### 1 · From handoff to bundle (10 min)
