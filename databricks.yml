@@ -11,14 +11,15 @@ include:
   - resources/*/*.yml
   - resources/*/*/*.yml
 
+# No workspace host is pinned: the workspace UI deploys to the workspace you're in, and CI sets
+# DATABRICKS_HOST. That lets the same bundle run in FEVM, Vocareum, or Free Edition.
+#
 # Development mode prefixes names, pauses schedules, and isolates each developer's copy.
 # Production-mode targets below deploy as the CI/CD service principal only.
 targets:
   dev:
     mode: development
     default: true
-    workspace:
-      host: https://fevm-csong-demo.cloud.databricks.com
     variables:
       environment: dev
       catalog: meijer_lab_int
@@ -26,7 +27,6 @@ targets:
   int:
     mode: production
     workspace:
-      host: https://fevm-csong-demo.cloud.databricks.com
       root_path: /Workspace/Users/${var.cicd_service_principal}/.bundle/${bundle.name}/${bundle.target}
     run_as:
       service_principal_name: ${var.cicd_service_principal}
@@ -42,7 +42,6 @@ targets:
   cert:
     mode: production
     workspace:
-      host: https://fevm-csong-demo.cloud.databricks.com
       root_path: /Workspace/Users/${var.cicd_service_principal}/.bundle/${bundle.name}/${bundle.target}
     run_as:
       service_principal_name: ${var.cicd_service_principal}
@@ -58,7 +57,6 @@ targets:
   prod:
     mode: production
     workspace:
-      host: https://fevm-csong-demo.cloud.databricks.com
       root_path: /Workspace/Users/${var.cicd_service_principal}/.bundle/${bundle.name}/${bundle.target}
     run_as:
       service_principal_name: ${var.cicd_service_principal}
