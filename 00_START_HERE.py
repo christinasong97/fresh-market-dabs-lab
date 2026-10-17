@@ -79,16 +79,13 @@
 # MAGIC | Job `Job_02_PL_Store_KPI_Alerts` | The hand-built job you start with in module 1 |
 # MAGIC | `/Workspace/.assistant_workspace_instructions.md` | The DevOps team's rules for Genie Code |
 # MAGIC
-# MAGIC Takes about 3 minutes the first time. **Storage location:** leave the widget at the top blank unless your
-# MAGIC workspace has no default storage (your instructor will tell you if so).
+# MAGIC Takes about 3 minutes the first time.
 
 # COMMAND ----------
 
 import os
 
 from databricks.sdk import WorkspaceClient
-
-dbutils.widgets.text("catalog_storage_root", "", "Storage location (usually blank)")
 
 PREFIX = "fresh_market_lab"
 WAREHOUSE = f"{PREFIX}_warehouse"
@@ -100,7 +97,6 @@ dbutils.notebook.run(
     3600,
     {
         "catalog_prefix": PREFIX,
-        "catalog_storage_root": dbutils.widgets.get("catalog_storage_root"),
         "attendee_principal": "",
         "cicd_service_principal": "",
         "warehouse_name": WAREHOUSE,

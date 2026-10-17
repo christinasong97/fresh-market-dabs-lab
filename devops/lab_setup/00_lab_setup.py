@@ -21,7 +21,7 @@
 # COMMAND ----------
 
 dbutils.widgets.text("catalog_prefix", "fresh_market_lab", "Catalog prefix")
-dbutils.widgets.text("catalog_storage_root", "", "Storage root (blank = default storage)")
+dbutils.widgets.text("catalog_storage_root", "", "Storage root override (usually blank)")
 dbutils.widgets.text("attendee_principal", "account users", "Attendee group (blank = skip grants)")
 dbutils.widgets.text("cicd_service_principal", "", "CI/CD service principal app ID (blank = skip)")
 dbutils.widgets.text("warehouse_name", "fresh_market_lab_warehouse", "SQL warehouse name")
@@ -48,9 +48,32 @@ def grant(securable, privileges, principal):
         spark.sql(f"GRANT {', '.join(privileges)} ON {securable} TO `{principal}`")
 
 
+def create_catalog(catalog, comment):
+    """Create a catalog where the workspace keeps its other catalogs.
+
+    Most workspaces (Vocareum, Free Edition) pick the storage automatically. Some shared metastores, like
+    FEVM's, don't; there we reuse the storage of the workspace's default catalog, so nobody has to supply it.
+    """
+    if storage_root:
+        spark.sql(f"CREATE CATALOG IF NOT EXISTS `{catalog}` MANAGED LOCATION '{storage_root}/{catalog}' COMMENT '{comment}'")
+        return
+    try:
+        spark.sql(f"CREATE CATALOG IF NOT EXISTS `{catalog}` COMMENT '{comment}'")
+    except Exception as e:  # noqa: BLE001 - only the "no default storage" case is handled below
+        if "storage" not in str(e).lower():
+            raise
+        default_catalog = spark.sql("SELECT current_catalog()").first()[0]
+        root = (spark.sql(f"DESCRIBE CATALOG EXTENDED `{default_catalog}`").where("info_name = 'Storage Root'").first() or [None, None])[1]
+        if not root:
+            raise RuntimeError(
+                "This workspace has no default storage for new catalogs. Set the catalog_storage_root widget."
+            ) from e
+        spark.sql(f"CREATE CATALOG IF NOT EXISTS `{catalog}` MANAGED LOCATION '{root.rstrip('/')}/{catalog}' COMMENT '{comment}'")
+        print(f"  (no default storage here; using {default_catalog}'s storage: {root})")
+
+
 for target, catalog in catalogs.items():
-    location = f" MANAGED LOCATION '{storage_root}/{catalog}'" if storage_root else ""
-    spark.sql(f"CREATE CATALOG IF NOT EXISTS `{catalog}`{location} COMMENT 'Fresh Market DABs lab: {target} target'")
+    create_catalog(catalog, f"Fresh Market DABs lab: {target} target")
     spark.sql(f"CREATE SCHEMA IF NOT EXISTS `{catalog}`.landing COMMENT 'Upstream source data (not managed by the bundle)'")
     spark.sql(f"CREATE VOLUME IF NOT EXISTS `{catalog}`.landing.raw COMMENT 'POS landing zone'")
 
@@ -162,7 +185,13 @@ if legacy:
     w.jobs.reset(job_id=legacy.job_id, new_settings=settings)
     legacy_id = legacy.job_id
 else:
-    legacy_id = w.jobs.create(**settings.as_shallow_dict()).job_id
+    legacy_id = w.jobs.create(
+        name=settings.name,
+        description=settings.description,
+        email_notifications=settings.email_notifications,
+        schedule=settings.schedule,
+        tasks=settings.tasks,
+    ).job_id
 w.permissions.update(
     "jobs",
     str(legacy_id),
