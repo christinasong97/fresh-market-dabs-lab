@@ -7,7 +7,7 @@
 # MAGIC | Step | Creates |
 # MAGIC |---|---|
 # MAGIC | 1 | Catalogs `<prefix>_int`, `<prefix>_cert`, `<prefix>_prod`, plus grants for attendees |
-# MAGIC | 2 | `landing.raw` volume in each catalog, with synthetic Meijer POS data |
+# MAGIC | 2 | `landing.raw` volume in each catalog, with synthetic Fresh Market POS data |
 # MAGIC | 3 | A named serverless SQL warehouse that every attendee can use |
 # MAGIC | 4 | The hand-built legacy job `Job_02_PL_Store_KPI_Alerts` used in module 1 |
 # MAGIC | 5 | Genie Code workspace instructions (`/Workspace/.assistant_workspace_instructions.md`) |
@@ -20,11 +20,11 @@
 
 # COMMAND ----------
 
-dbutils.widgets.text("catalog_prefix", "meijer_lab", "Catalog prefix")
+dbutils.widgets.text("catalog_prefix", "fresh_market_lab", "Catalog prefix")
 dbutils.widgets.text("catalog_storage_root", "", "Storage root (blank = default storage)")
 dbutils.widgets.text("attendee_principal", "account users", "Attendee group (blank = skip grants)")
 dbutils.widgets.text("cicd_service_principal", "", "CI/CD service principal app ID (blank = skip)")
-dbutils.widgets.text("warehouse_name", "meijer_lab_warehouse", "SQL warehouse name")
+dbutils.widgets.text("warehouse_name", "fresh_market_lab_warehouse", "SQL warehouse name")
 dbutils.widgets.dropdown("stage_data", "true", ["true", "false"], "Stage landing data")
 
 prefix = dbutils.widgets.get("catalog_prefix").strip()
@@ -50,7 +50,7 @@ def grant(securable, privileges, principal):
 
 for target, catalog in catalogs.items():
     location = f" MANAGED LOCATION '{storage_root}/{catalog}'" if storage_root else ""
-    spark.sql(f"CREATE CATALOG IF NOT EXISTS `{catalog}`{location} COMMENT 'Meijer DABs lab: {target} target'")
+    spark.sql(f"CREATE CATALOG IF NOT EXISTS `{catalog}`{location} COMMENT 'Fresh Market DABs lab: {target} target'")
     spark.sql(f"CREATE SCHEMA IF NOT EXISTS `{catalog}`.landing COMMENT 'Upstream source data (not managed by the bundle)'")
     spark.sql(f"CREATE VOLUME IF NOT EXISTS `{catalog}`.landing.raw COMMENT 'POS landing zone'")
 
@@ -120,13 +120,13 @@ w.permissions.update(
 import base64  # noqa: E402
 import os  # noqa: E402
 
-LEGACY_FOLDER = "/Workspace/Shared/meijer_dabs_lab_legacy"
+LEGACY_FOLDER = "/Workspace/Shared/fresh_market_dabs_lab_legacy"
 LEGACY_NOTEBOOK = f"{LEGACY_FOLDER}/Job_02_Store_KPI_Alerts"
 LEGACY_JOB = "Job_02_PL_Store_KPI_Alerts"
 
 # In a Git folder the legacy .py file is a notebook, so read it through the workspace API.
 exported = w.workspace.export(f"{os.getcwd()}/legacy/Job_02_Store_KPI_Alerts", format=workspace.ExportFormat.SOURCE)
-source = base64.b64decode(exported.content).decode().replace("meijer_lab_int", catalogs["int"])
+source = base64.b64decode(exported.content).decode().replace("fresh_market_lab_int", catalogs["int"])
 
 w.workspace.mkdirs(LEGACY_FOLDER)
 w.workspace.import_(

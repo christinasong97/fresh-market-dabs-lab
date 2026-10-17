@@ -17,7 +17,7 @@
 
 # COMMAND ----------
 
-dbutils.widgets.text("catalogs", "meijer_lab_int,meijer_lab_cert,meijer_lab_prod")
+dbutils.widgets.text("catalogs", "fresh_market_lab_int,fresh_market_lab_cert,fresh_market_lab_prod")
 dbutils.widgets.text("days", "60")
 dbutils.widgets.text("lines_per_store_per_day", "120")
 dbutils.widgets.dropdown("targets_only", "false", ["false", "true"])
@@ -76,7 +76,7 @@ for i in range(40):
     fmt = "Express" if i % 7 == 6 else "Supercenter"
     stores.append([
         100 + i,
-        f"Meijer {city}" + ("" if i < len(CITIES) else f" #{i // len(CITIES) + 1}"),
+        f"Fresh Market {city}" + ("" if i < len(CITIES) else f" #{i // len(CITIES) + 1}"),
         city, state, region, fmt,
         40000 if fmt == "Express" else random.randint(150000, 250000),
         (date(1985, 1, 1) + timedelta(days=random.randint(0, 13000))).isoformat(),
@@ -135,7 +135,7 @@ for d in range(days):
 targets = [[sid, round(total / baseline_days, -1)] for sid, total in baseline_sales.items()]
 
 TXN_HEADER = ["transaction_id", "store_id", "product_id", "transaction_ts", "quantity",
-              "unit_price", "discount_amount", "total_amount", "payment_type", "mperks_member"]
+              "unit_price", "discount_amount", "total_amount", "payment_type", "rewards_member"]
 print(f"{len(stores)} stores, {len(products)} products, {sum(len(v) for v in txn_files.values()):,} POS lines")
 
 # COMMAND ----------

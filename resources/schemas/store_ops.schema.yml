@@ -5,4 +5,4 @@ resources:
     so_store_ops:
       catalog_name: ${var.catalog}
       name: store_ops
-      comment: Store operations sales and KPI tables. Managed by the meijer_dabs_lab bundle.
+      comment: Store operations sales and KPI tables. Managed by the fresh_market_dabs_lab bundle.

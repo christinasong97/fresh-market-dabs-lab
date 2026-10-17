@@ -1,6 +1,6 @@
-# Meijer Lab: CI/CD with Declarative Automation Bundles
+# Fresh Market Lab: CI/CD with Declarative Automation Bundles
 
-A reference bundle for the EDAA repository layout, plus a 90-minute hands-on lab. You take a job
+A reference bundle for the DevOps team's repository layout, plus a 90-minute hands-on lab. You take a job
 built by hand in the workspace, bring it into a bundle, test your own copy, and see it promoted to
 production through a pull request, automated checks, and an approval gate. All of it happens in the
 Databricks workspace UI with Genie Code.
@@ -24,10 +24,10 @@ Databricks workspace UI with Genie Code.
 
 | Target | Mode | Catalog | Deployed by | When |
 |---|---|---|---|---|
-| `dev` | development | `meijer_lab_int` (your own schema) | You, from the Deployments panel | Any time |
-| `int` | production | `meijer_lab_int` | CI/CD service principal | Merge to `develop` |
-| `cert` | production | `meijer_lab_cert` | CI/CD service principal | Merge to `main` |
-| `prod` | production | `meijer_lab_prod` | CI/CD service principal | After cert passes **and** an approver signs off |
+| `dev` | development | `fresh_market_lab_int` (your own schema) | You, from the Deployments panel | Any time |
+| `int` | production | `fresh_market_lab_int` | CI/CD service principal | Merge to `develop` |
+| `cert` | production | `fresh_market_lab_cert` | CI/CD service principal | Merge to `main` |
+| `prod` | production | `fresh_market_lab_prod` | CI/CD service principal | After cert passes **and** an approver signs off |
 
 ## Layout
 

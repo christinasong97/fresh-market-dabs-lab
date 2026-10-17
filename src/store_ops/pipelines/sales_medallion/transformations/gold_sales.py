@@ -15,7 +15,7 @@ def gold_daily_store_sales():
         F.sum("discount_amount").alias("discounts"),
         F.countDistinct("transaction_id").alias("transaction_count"),
         F.sum("quantity").alias("units_sold"),
-        F.avg(F.col("mperks_member").cast("int")).alias("mperks_share"),
+        F.avg(F.col("rewards_member").cast("int")).alias("rewards_share"),
     )
     return (
         daily.join(stores, "store_id", "left")
@@ -33,7 +33,7 @@ def gold_daily_store_sales():
             "discounts",
             "transaction_count",
             "units_sold",
-            "mperks_share",
+            "rewards_share",
             "daily_sales_target",
             "target_attainment_pct",
         )

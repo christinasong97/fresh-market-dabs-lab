@@ -82,7 +82,7 @@ def test_domain_variables_are_prefixed(resource_files):
 
 
 def test_no_hardcoded_catalogs(bundle_root):
-    pattern = re.compile(r"\bmeijer_lab_(int|cert|prod)\b")
+    pattern = re.compile(r"\bfresh_market_lab_(int|cert|prod)\b")
     hits = []
     for folder in ("resources", "src"):
         for path in (bundle_root / folder).rglob("*"):

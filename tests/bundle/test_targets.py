@@ -32,6 +32,8 @@ def test_shared_targets_restrict_permissions(root_config, target):
     assert all(level != "CAN_MANAGE" for level, who in levels if who == "users")
 
 
-@pytest.mark.parametrize("target,catalog", [("int", "meijer_lab_int"), ("cert", "meijer_lab_cert"), ("prod", "meijer_lab_prod")])
+@pytest.mark.parametrize(
+    "target,catalog", [("int", "fresh_market_lab_int"), ("cert", "fresh_market_lab_cert"), ("prod", "fresh_market_lab_prod")]
+)
 def test_each_target_uses_its_own_catalog(root_config, target, catalog):
     assert root_config["targets"][target]["variables"]["catalog"] == catalog
