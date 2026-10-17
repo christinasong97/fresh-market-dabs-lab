@@ -15,7 +15,7 @@ variables:
     default: fed96b3b-5e9f-4a70-8e9d-d712ff9d2204
   warehouse_name:
     description: Name of the SQL warehouse for dashboards and Genie spaces. Differs per workspace.
-    default: Serverless Starter Warehouse
+    default: meijer_lab_warehouse
   warehouse_id:
     description: Resolved from warehouse_name, so no warehouse IDs are hard-coded.
     lookup:
