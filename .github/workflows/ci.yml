@@ -26,8 +26,9 @@ jobs:
   validate:
     name: Bundle validate (${{ matrix.target }})
     needs: checks
-    # Pull requests from forks get no credentials, so they stop after the offline checks.
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    # Needs network access to the workspace. Off until DATABRICKS_CI_ENABLED is set to 'true'.
+    # Pull requests from forks get no credentials, so they always stop after the offline checks.
+    if: vars.DATABRICKS_CI_ENABLED == 'true' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     environment: ci
     strategy:
