@@ -1,5 +1,7 @@
 # Promotion: develop -> int, main -> cert -> (approval) -> prod.
 # Every deploy runs as the CI/CD service principal; no person deploys to a shared environment.
+# Off until the repository variable DATABRICKS_CI_ENABLED is set to 'true' (the runner must be
+# able to reach the workspace; FEVM's IP access list blocks GitHub-hosted runners).
 name: Deploy
 
 on:
@@ -20,7 +22,7 @@ env:
 jobs:
   int:
     name: Deploy to int
-    if: github.ref == 'refs/heads/develop'
+    if: vars.DATABRICKS_CI_ENABLED == 'true' && github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     environment: int
     env:
@@ -34,7 +36,7 @@ jobs:
 
   cert:
     name: Deploy to cert + integration test
-    if: github.ref == 'refs/heads/main'
+    if: vars.DATABRICKS_CI_ENABLED == 'true' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: cert
     env:
