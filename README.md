@@ -62,7 +62,7 @@ devops/
 
 | Branch | Use |
 |---|---|
-| `lab/start` | Where attendees begin: template, tests, CI, dashboard, and Genie space only |
+| `lab/start` | Where attendees begin: template (with a `dev` target), tests, CI, dashboard, and Genie space only |
 | `lab/01-imported` | Catch-up: legacy job imported as-is (fails the rule checks on purpose) |
 | `lab/02-restructured` | Catch-up: job restructured to the team standard |
 | `lab/03-pipeline` | Catch-up: pipeline and orchestrator added |
@@ -71,8 +71,8 @@ devops/
 ## Try the full flow yourself
 
 Fork the repo, then:
-1. Point the `host` values in `databricks.yml` at your workspace, and set `cicd_service_principal`
-   in `resources/variables/common.vars.yml`.
+1. Set `cicd_service_principal` and `warehouse_name` in `resources/variables/common.vars.yml`. No host is pinned:
+   the workspace UI deploys to the workspace you're in, and CI uses `DATABRICKS_HOST`.
 2. Run `devops/lab_setup/stage_landing_data.py` once as an admin.
 3. Create GitHub environments `ci`, `int`, `cert`, `prod` with secrets `DATABRICKS_CLIENT_ID` and
    `DATABRICKS_CLIENT_SECRET`, plus a repository variable `DATABRICKS_HOST`. Add a required reviewer to `prod`.

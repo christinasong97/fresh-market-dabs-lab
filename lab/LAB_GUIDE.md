@@ -62,8 +62,9 @@ the numbered name, the personal email on failure, and the notebook with `meijer_
 
 > **Prompt card 1:** *Explain this job YAML to me. What would break if we deployed it to cert and prod as-is?*
 
-**Run the team's checks:** Deployments panel → **Deploy** isn't available yet (no dev target). Instead, look
-at `tests/bundle/test_rules.py` and predict which rules this job breaks. You'll run them for real in module 4.
+**Run the team's checks:** in the Deployments panel, pick target **dev** and click **Deploy**. Then run the
+**`admin_rule_checks`** job. These are the same checks CI runs on every pull request. The imported job deploys
+fine, but the checks fail on five rules. That's the gap between "valid" and "follows our standards."
 
 Catch-up: `lab/01-imported`
 
@@ -108,15 +109,15 @@ Catch-up: `lab/03-pipeline`
 
 ## Module 4 · Your own development target (15 min)
 
-`int`, `cert`, and `prod` are locked to the service principal, so you can't deploy them. Add a target you can:
+`int`, `cert`, and `prod` are locked to the CI/CD service principal, so only CI can deploy them. The `dev`
+target is what lets you test the real thing yourself. Meijer's current template doesn't have one; this is the
+piece the lab adds.
 
 ```yaml
 targets:
   dev:
     mode: development
     default: true
-    workspace:
-      host: https://fevm-csong-demo.cloud.databricks.com
     variables:
       environment: dev
       catalog: meijer_lab_int
@@ -125,8 +126,7 @@ targets:
 1. **Deploy** from the Deployments panel (target `dev`).
 2. Look at what you got: every job is prefixed `[dev <you>]`, schedules are paused, and your tables land in
    `meijer_lab_int.dev_<you>_store_ops`, so nobody else's work is touched.
-3. Run **`so_orchestrator`**. While it runs, run **`admin_rule_checks`**. These are the same checks CI runs.
-   If any fail, fix them (ask Genie Code) and redeploy.
+3. Run **`so_orchestrator`**. While it runs, run **`admin_rule_checks`** again. Everything should pass now.
 4. When the orchestrator finishes, open **Store Performance (dev)** and ask **Store Ops Genie (dev)**:
    *Which stores are underperforming right now?*
 5. Open `databricks.yml` and compare `dev` with `prod`: same resources, different catalog, run-as identity,
