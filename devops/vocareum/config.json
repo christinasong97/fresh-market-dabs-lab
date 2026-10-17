@@ -1,0 +1,6 @@
+{
+  "content": {"src": "content.zip", "entry": "00_START_HERE", "folder": "fresh_market_dabs_lab"},
+  "metastore_config": {"enable_create_catalog": true},
+  "workspace_setup": "devops/lab_setup/00_lab_setup",
+  "enable_files": true
+}
