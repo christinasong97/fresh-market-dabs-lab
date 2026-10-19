@@ -53,18 +53,38 @@ display(spark.sql(f"SELECT * FROM `{CATALOG}`.`{schema}`.gold_store_alerts ORDER
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 4.3 · Open your dashboard and ask your Genie space
+# MAGIC ## 4.3 · Add an agent to your bundle: the Genie space
+# MAGIC
+# MAGIC A Genie space is an agent that answers questions about specific tables, and it can't be created until those
+# MAGIC tables exist. Now that your orchestrator has built them, add **Store Ops Genie** to the bundle. Run the cell,
+# MAGIC look at the YAML, then **deploy again** (Deployments panel → `dev` → **Deploy**).
+# MAGIC
+# MAGIC Notice how it names its tables: `${var.catalog}.${resources.schemas.so_store_ops.name}`. In dev it reads your
+# MAGIC schema; in prod it reads prod's. Its instructions and example SQL are code, reviewed in the same pull request
+# MAGIC as the tables they describe.
+
+# COMMAND ----------
+
+catch_up(4)
+show_file("resources/genie_spaces/store_ops/so_store_ops_genie.genie_space.yml")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 4.4 · Open your dashboard and ask your Genie space
+# MAGIC
+# MAGIC ✅ You should see links to both, and Genie should list about six underperforming stores.
 
 # COMMAND ----------
 
 dash = find_dev_dashboard()
 space = find_dev_genie_space()
 if dash:
-    link(f"/dashboardsv3/{dash.dashboard_id}/published", f"📊 {dash.display_name}")
+    link(f"/dashboardsv3/{dash['id']}/published", f"📊 {dash['name']}")
 if space:
-    link(f"/genie/rooms/{space.space_id}", f"💬 {space.title}")
-if not (dash and space):
-    print("Deploy the bundle first; the dashboard and Genie space are created on deploy.")
+    link(f"/genie/rooms/{space['id']}", f"💬 {space['name']}")
+if not space:
+    print("No Genie space yet: run the cell in 4.3, then deploy again.")
 
 # COMMAND ----------
 
@@ -73,7 +93,7 @@ ask_genie("Which stores are underperforming right now?")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 4.4 · Final check
+# MAGIC ## 4.5 · Final check
 # MAGIC
 # MAGIC Everything should pass now.
 
@@ -84,7 +104,7 @@ rule_checks()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 4.5 · Same files, different targets
+# MAGIC ## 4.6 · Same files, different targets
 # MAGIC
 # MAGIC Compare `dev` with `prod`: same resources, but a different catalog, a different identity, and locked
 # MAGIC permissions. Nobody edits a file to promote; the target does the work.

@@ -1,0 +1,36 @@
+# "Store Ops Genie": the agent in this bundle. Defined as code so its tables, instructions, and
+# example SQL are reviewed in pull requests and promoted with the data they query.
+resources:
+  genie_spaces:
+    so_store_ops_genie:
+      title: Store Ops Genie (${var.environment})
+      description: Ask about store sales, target attainment, and which stores need a review.
+      warehouse_id: ${var.warehouse_id}
+      serialized_space:
+        version: 2
+        config:
+          sample_questions:
+            - id: "10000000000000000000000000000001"
+              question: ["Which stores are underperforming right now?"]
+            - id: "10000000000000000000000000000002"
+              question: ["How did net sales trend by region over the last 30 days?"]
+            - id: "10000000000000000000000000000003"
+              question: ["What share of sales came from FreshRewards members by store format?"]
+        data_sources:
+          tables:
+            - identifier: ${var.catalog}.${resources.schemas.so_store_ops.name}.gold_daily_store_sales
+            - identifier: ${var.catalog}.${resources.schemas.so_store_ops.name}.gold_department_sales
+            - identifier: ${var.catalog}.${resources.schemas.so_store_ops.name}.gold_store_alerts
+        instructions:
+          text_instructions:
+            - id: "30000000000000000000000000000001"
+              content:
+                - "gold_daily_store_sales has one row per store per day. net_sales is after discounts. target_attainment_pct = net_sales / daily_sales_target * 100."
+                - "gold_store_alerts is the latest store review list. status is UNDERPERFORMING (below threshold), WATCH (below 100%), or ON_TARGET."
+                - "rewards_share is the fraction of line items bought by FreshRewards loyalty members (0 to 1)."
+                - "'Recent' or 'right now' means the last 14 days of sales_date, measured from the latest sales_date in the table."
+          example_question_sqls:
+            - id: "20000000000000000000000000000001"
+              question: ["Which stores are underperforming right now?"]
+              sql:
+                - "SELECT store_name, region, attainment_pct FROM ${var.catalog}.${resources.schemas.so_store_ops.name}.gold_store_alerts WHERE status = 'UNDERPERFORMING' ORDER BY attainment_pct"

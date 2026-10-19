@@ -3,7 +3,7 @@
 # MAGIC # Module 3 · Build the bundle with Genie Code (20 min)
 # MAGIC
 # MAGIC **Goal:** add the sales pipeline that feeds your KPI job, plus an orchestrator job that runs everything in order.
-# MAGIC By the end, one bundle holds jobs, a pipeline, a dashboard, and a Genie space.
+# MAGIC By the end, one bundle holds jobs, a pipeline, and a dashboard. (The Genie space joins in module 4.)
 
 # COMMAND ----------
 
@@ -68,15 +68,15 @@ show_file("resources/jobs/store_ops/orchestrator.job.yml")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 3.3 · The dashboard and the Genie space were already code
+# MAGIC ## 3.3 · The dashboard was already code
 # MAGIC
-# MAGIC They came with the starter repo, and they point at the tables your pipeline just defined. Look at how the Genie
-# MAGIC space names its tables: `${var.catalog}.${resources.schemas.so_store_ops.name}`. In dev it reads your schema; in
-# MAGIC prod it reads prod's. Change a gold table, and the Genie space change is in the same pull request.
+# MAGIC It came with the starter repo and points at the tables your pipeline just defined. Its queries use bare table
+# MAGIC names; `dataset_catalog` and `dataset_schema` point them at `${var.catalog}` and your schema, so the same file
+# MAGIC shows your data in dev and production data in prod. (The Genie space joins the bundle in module 4, once its
+# MAGIC tables exist.)
 
 # COMMAND ----------
 
-show_file("resources/genie_spaces/store_ops/so_store_ops_genie.genie_space.yml")
 show_file("resources/dashboards/store_ops/so_store_performance.dashboard.yml")
 
 # COMMAND ----------
