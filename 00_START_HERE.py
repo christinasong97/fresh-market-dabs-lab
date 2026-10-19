@@ -37,9 +37,9 @@
 # MAGIC
 # MAGIC ```
 # MAGIC  fresh-market-dabs-lab/  (a Git folder)
-# MAGIC  ├── databricks.yml        ← the bundle: name + targets (dev, int, cert, prod)
-# MAGIC  ├── resources/            ← YAML describing each job, pipeline, dashboard, Genie space
-# MAGIC  └── src/                  ← the notebooks, pipeline code, and dashboard they use
+# MAGIC  ├── databricks.yml        ← required bundle configuration file: name + targets (dev, int, cert, prod)
+# MAGIC  ├── resources/            ← additional YAML configuration files describing each job, pipeline, dashboard, Genie space
+# MAGIC  └── src/                  ← the source files (notebooks, pipeline code, and dashboard) they use
 # MAGIC
 # MAGIC        Deploy (target: dev)  ──►  your own copy, in your own schema
 # MAGIC        Deploy (target: prod) ──►  production, run by a service principal
