@@ -22,6 +22,8 @@ by hand.** Each module shows one or two platform features that make that possibl
 ## Module-by-module
 
 ### 0 · Today vs. target (10 min)
+- **Name it up front:** "Declarative Automation Bundles is the new name for Databricks Asset Bundles. Same feature,
+  same `databricks.yml`. Your wiki says Asset Bundles; it's the same thing."
 - "DevOps and the platform team already chose bundles. The open question is who does the work."
 - Show today's handoff. Ask: *how many of you have had a job behave differently in prod than in INT?*
 - Show the ownership split: DevOps owns `databricks.yml`, variables, CI, and the Genie Code instructions.

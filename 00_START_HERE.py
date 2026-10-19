@@ -26,7 +26,11 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## What is a Declarative Automation Bundle?
+# MAGIC ## What is a Declarative Automation Bundle (DAB)?
+# MAGIC
+# MAGIC > **Same thing, new name.** Declarative Automation Bundles (DABs) were formerly called **Databricks Asset
+# MAGIC > Bundles**. Only the name changed: same `databricks.yml`, same features, same "DABs" acronym. If your team's
+# MAGIC > docs or older articles say "Asset Bundles," they mean exactly this.
 # MAGIC
 # MAGIC A **bundle** is a folder in Git that describes your Databricks work as files: the jobs, pipelines,
 # MAGIC dashboards, and Genie spaces, plus the code they run. You don't click resources into existence; you

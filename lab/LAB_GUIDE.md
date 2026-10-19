@@ -1,5 +1,8 @@
 # Lab Guide: CI/CD with Declarative Automation Bundles
 
+> **Declarative Automation Bundles (DABs)** were formerly called **Databricks Asset Bundles**. Same feature,
+> new name.
+
 **Time:** 90 minutes · **Where:** the Databricks workspace (no IDE, no terminal) · **Tools:** Git folders, Deployments panel, Genie Code
 
 You'll take a job built by hand the way jobs are built today, turn it into code you own, test your own
