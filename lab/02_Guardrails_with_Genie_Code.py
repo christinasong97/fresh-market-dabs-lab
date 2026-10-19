@@ -19,12 +19,21 @@
 # MAGIC %md
 # MAGIC ## 2.1 · Read the rules Genie Code follows
 # MAGIC
-# MAGIC DevOps keeps this file in the repo and publishes it to the workspace, so every developer's Genie Code follows
-# MAGIC the same standard.
+# MAGIC Genie Code's team rules are a plain Markdown file. It lives in two places:
+# MAGIC
+# MAGIC | Where | What it is |
+# MAGIC |---|---|
+# MAGIC | **`.assistant_workspace_instructions.md`**, top of your Git folder | The source. DevOps changes it by pull request. |
+# MAGIC | **`/Workspace/.assistant_workspace_instructions.md`** | The copy Genie Code reads. `00_START_HERE` published it. |
+# MAGIC
+# MAGIC Run the cell to read the rules and check the published copy matches the one in your Git folder.
 
 # COMMAND ----------
 
 show_file(".assistant_workspace_instructions.md")
+published = w.workspace.download("/Workspace/.assistant_workspace_instructions.md").read().decode()
+same = published.strip() == read_repo_file(".assistant_workspace_instructions.md").strip()
+print("✅ The published copy matches your Git folder." if same else "⚠️  The published copy is different. Rerun 00_START_HERE.")
 
 # COMMAND ----------
 
