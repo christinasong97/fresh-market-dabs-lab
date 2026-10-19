@@ -129,7 +129,7 @@ show_file("resources/jobs/store_ops/orchestrator.job.yml")
 # MAGIC
 # MAGIC | File | What it holds |
 # MAGIC |---|---|
-# MAGIC | `src/store_ops/dashboards/store_performance.lvdash.json` | The dashboard itself: pages, charts, and queries, as built in the UI |
+# MAGIC | `src/store_ops/dashboards/store_performance.lvdash.json` | The dashboard itself: pages, charts, queries |
 # MAGIC | `resources/dashboards/store_ops/so_store_performance.dashboard.yml` | Where it deploys and which data it reads |
 # MAGIC
 # MAGIC The queries use bare table names (`FROM gold_daily_store_sales`). Two lines in the YAML fill in the rest:
