@@ -1,0 +1,25 @@
+# Master DAG for store_ops. Order lives in depends_on, not in Job_00/01/02 file names.
+resources:
+  jobs:
+    so_orchestrator:
+      name: ${bundle.name}_${var.environment}_so_orchestrator
+      description: Refresh POS sales, then publish store KPIs.
+      tags:
+        domain: store_ops
+        cost_center: ${var.cost_center}
+      email_notifications:
+        on_failure:
+          - ${var.notification_email}
+      schedule:
+        quartz_cron_expression: "0 0 6 * * ?"
+        timezone_id: America/Detroit
+      tasks:
+        - task_key: refresh_sales
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.so_sales_medallion.id}
+
+        - task_key: publish_store_kpis
+          depends_on:
+            - task_key: refresh_sales
+          run_job_task:
+            job_id: ${resources.jobs.so_store_kpis.id}

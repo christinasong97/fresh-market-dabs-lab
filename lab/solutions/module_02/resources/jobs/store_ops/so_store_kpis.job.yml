@@ -1,0 +1,39 @@
+# Flags stores that are behind target and asks store operations to review them.
+resources:
+  jobs:
+    so_store_kpis:
+      name: ${bundle.name}_${var.environment}_so_store_kpis
+      description: Publish store KPI attainment and notify store ops when stores fall behind target.
+      tags:
+        domain: store_ops
+        cost_center: ${var.cost_center}
+      email_notifications:
+        on_failure:
+          - ${var.notification_email}
+      tasks:
+        - task_key: publish_store_kpis
+          notebook_task:
+            notebook_path: ../../../src/store_ops/notebooks/store_kpis/publish_store_kpis.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${resources.schemas.so_store_ops.name}
+              lookback_days: ${var.so_lookback_days}
+              threshold_pct: ${var.so_underperform_threshold_pct}
+
+        - task_key: has_underperformers
+          depends_on:
+            - task_key: publish_store_kpis
+          condition_task:
+            op: GREATER_THAN
+            left: "{{tasks.publish_store_kpis.values.flagged_count}}"
+            right: "0"
+
+        - task_key: notify_store_ops
+          depends_on:
+            - task_key: has_underperformers
+              outcome: "true"
+          notebook_task:
+            notebook_path: ../../../src/store_ops/notebooks/store_kpis/notify_store_ops.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${resources.schemas.so_store_ops.name}

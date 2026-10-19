@@ -1,0 +1,18 @@
+# POS sales medallion pipeline: landing CSVs -> bronze -> silver -> gold.
+resources:
+  pipelines:
+    so_sales_medallion:
+      name: ${bundle.name}_${var.environment}_so_sales_medallion
+      catalog: ${var.catalog}
+      schema: ${resources.schemas.so_store_ops.name}
+      serverless: true
+      continuous: false
+      root_path: ../../../src/store_ops/pipelines/sales_medallion
+      libraries:
+        - glob:
+            include: ../../../src/store_ops/pipelines/sales_medallion/transformations/**
+      configuration:
+        so.landing_path: ${var.landing_path}
+      tags:
+        domain: store_ops
+        cost_center: ${var.cost_center}
