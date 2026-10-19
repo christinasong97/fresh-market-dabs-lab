@@ -58,20 +58,31 @@ link(f"/jobs/{legacy.job_id}", "Open the job in the UI")
 # MAGIC %md
 # MAGIC ## 1.2 · Bring the job into your bundle
 # MAGIC
-# MAGIC **First, see the job as code.** Every job you build in the UI already has a YAML version:
-# MAGIC 1. Click **Open the job in the UI** (the link above). The job opens in a new tab.
-# MAGIC 2. Open the **⋮** menu at the top right of the job page and choose **View as code**.
-# MAGIC 3. Choose **YAML**. That's the job's definition, in the same format a bundle uses. Close the dialog.
+# MAGIC Every job you build in the UI can be written as YAML, the same format a bundle uses. Turn this one into a YAML
+# MAGIC file in your bundle, exactly as it is today, problems included. **Pick one of the two options.**
 # MAGIC
-# MAGIC **Then save it into your bundle: run the next cell.** It writes two files into your Git folder, exactly as the
-# MAGIC job is today, problems included:
-# MAGIC - `resources/job_02_pl_store_kpi_alerts.job.yml`: the YAML you just looked at
-# MAGIC - `src/Job_02_Store_KPI_Alerts.py`: the notebook the job runs, so the bundle carries its own code
+# MAGIC ### Option A · In the UI, no code
+# MAGIC 1. In the left sidebar, click **Workspace** and open your Git folder (`fresh-market-dabs-lab`).
+# MAGIC 2. Click **Open in editor** next to the bundle name, at the top.
+# MAGIC 3. Click the **Deployments** icon (rocket) on the left of the editor. The Deployments panel opens.
+# MAGIC 4. In the **Bundle resources** section, click **Add**, then **Add existing job**.
+# MAGIC 5. In the job dropdown, choose **`Job_02_PL_Store_KPI_Alerts`**.
+# MAGIC 6. Choose **(Advanced) Don't update**. Your bundle gets its own copy, and the original hand-built job stays
+# MAGIC    untouched. (The other two options link the original job to your bundle, so your deploys would overwrite it.)
+# MAGIC 7. Click **Add**. Databricks writes the job's YAML file into your bundle.
+# MAGIC 8. Skip the next cell and go to **1.3**.
 # MAGIC
-# MAGIC ✅ You should see both files marked ✅. In the left sidebar, open your Git folder to find them.
+# MAGIC ### Option B · Run the cell
+# MAGIC Run the next cell. It does the same thing with code, and also copies the job's notebook into `src/`, so the
+# MAGIC bundle carries its own code. It writes:
+# MAGIC - `resources/job_02_pl_store_kpi_alerts.job.yml`: the job's YAML
+# MAGIC - `src/Job_02_Store_KPI_Alerts.py`: the notebook the job runs
+# MAGIC
+# MAGIC With Option A, the notebook stays in `/Workspace/Shared` for now. Genie Code moves it into the bundle in module 2.
 
 # COMMAND ----------
 
+# Option B only. Skip this cell if you used Option A.
 import yaml
 
 job_yaml = {
@@ -103,9 +114,50 @@ expect_files(["resources/job_02_pl_store_kpi_alerts.job.yml", "src/Job_02_Store_
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 1.3 · Ask Genie Code about it
+# MAGIC ## 1.3 · Break down the job YAML
 # MAGIC
-# MAGIC Open `resources/job_02_pl_store_kpi_alerts.job.yml`, open **Genie Code** (agent mode), and paste:
+# MAGIC Run the cell. It finds the job's YAML file in your Git folder, whichever option you used, and prints it.
+# MAGIC
+# MAGIC ✅ You should see `✅` next to the file, then the YAML.
+
+# COMMAND ----------
+
+job_file = show_imported_job()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC **How the file is built.** Every resource file in a bundle has the same shape:
+# MAGIC
+# MAGIC ```
+# MAGIC resources:                        ← everything the bundle creates is listed under "resources"
+# MAGIC   jobs:                           ← the resource type: jobs, pipelines, dashboards, schemas, genie_spaces, ...
+# MAGIC     job_02_pl_store_kpi_alerts:   ← the resource key: the bundle's own name for this job (yours may differ)
+# MAGIC       name: ...                   ← the display name you see in the Jobs UI
+# MAGIC       email_notifications: ...    ← who hears about failures
+# MAGIC       schedule: ...               ← when it runs
+# MAGIC       tasks:                      ← the steps, in order
+# MAGIC         - task_key: ...           ← the step's name
+# MAGIC           notebook_task:
+# MAGIC             notebook_path: ...    ← the code the step runs
+# MAGIC ```
+# MAGIC
+# MAGIC | Part | What it does |
+# MAGIC |---|---|
+# MAGIC | **Resource key** | How other files refer to the job: `${resources.jobs.<key>.id}`. Same in every target. |
+# MAGIC | **`name`** | What people see in the UI. Module 2 makes it `${bundle.name}_${var.environment}_...` |
+# MAGIC | **Settings** (`email_notifications`, `schedule`, `tasks`) | What you'd click through on the job page |
+# MAGIC | **How it joins the bundle** | `databricks.yml` includes every `resources/*.yml` file |
+# MAGIC
+# MAGIC The problems from 1.1 are all visible here: the numbered name and task key, Jane's email, and (inside the
+# MAGIC notebook) the hard-coded catalog.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 1.4 · Ask Genie Code about it
+# MAGIC
+# MAGIC Open the job's YAML file from 1.3, open **Genie Code** (agent mode), and paste:
 # MAGIC
 # MAGIC ```
 # MAGIC Explain this job YAML to me. What would break if we deployed it to cert and prod as-is?
@@ -117,7 +169,7 @@ expect_files(["resources/job_02_pl_store_kpi_alerts.job.yml", "src/Job_02_Store_
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 1.4 · Deploy your copy
+# MAGIC ## 1.5 · Deploy your copy
 # MAGIC
 # MAGIC 1. Open **`databricks.yml`** in your Git folder. The **Deployments** panel (rocket icon) opens on the side.
 # MAGIC 2. Choose target **`dev`**, click **Validate**, then **Deploy**.
@@ -127,7 +179,7 @@ expect_files(["resources/job_02_pl_store_kpi_alerts.job.yml", "src/Job_02_Store_
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 1.5 · Run the team's checks
+# MAGIC ## 1.6 · Run the team's checks
 # MAGIC
 # MAGIC These are the **same checks CI runs on every pull request**, packaged as a job in the bundle. Expect about five
 # MAGIC failures. That's the point: the job deploys, but it doesn't meet the team's standards.

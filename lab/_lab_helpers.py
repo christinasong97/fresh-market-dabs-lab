@@ -165,7 +165,37 @@ def remove_repo_file(rel):
             os.remove(p) if os.path.isfile(p) else w.workspace.delete(p)
 
 
-IMPORTED_FILES = ["resources/job_02_pl_store_kpi_alerts.job.yml", "src/Job_02_Store_KPI_Alerts.py"]
+LEGACY_JOB_NAME = "Job_02_PL_Store_KPI_Alerts"
+LEGACY_NOTEBOOK_COPY = "src/Job_02_Store_KPI_Alerts.py"
+
+
+def imported_job_files():
+    """The Job_02 files brought into the bundle in module 1, by the cell or by Add existing job."""
+    found = []
+    for folder, dirs, files in os.walk(REPO_ROOT):
+        dirs[:] = [d for d in dirs if d not in (".git", "lab", "devops", "tests")]
+        for name in files:
+            path = os.path.join(folder, name)
+            if name.endswith((".yml", ".yaml")) and LEGACY_JOB_NAME in open(path).read():
+                found.append(os.path.relpath(path, REPO_ROOT))
+    if _exists(LEGACY_NOTEBOOK_COPY):
+        found.append(LEGACY_NOTEBOOK_COPY)
+    return sorted(found)
+
+
+def show_imported_job():
+    """Find the imported Job_02 YAML file, check it's where the bundle reads it, and print it."""
+    yml = [f for f in imported_job_files() if f.endswith((".yml", ".yaml"))]
+    if not yml:
+        print("❌ No YAML file for Job_02 in your Git folder yet. Do Option A or Option B in 1.2 first.")
+        return None
+    rel = yml[0]
+    print(f"✅ {rel}")
+    if not rel.startswith("resources/"):
+        print("⚠️  The bundle only reads YAML files in resources/. Move this file into the resources folder.")
+    print()
+    show_file(rel)
+    return rel
 
 
 def catch_up(module):
@@ -181,7 +211,7 @@ def catch_up(module):
         write_repo_file(rel, content)
         copied.append(rel)
     if module >= 2:
-        for rel in IMPORTED_FILES:
+        for rel in imported_job_files():
             remove_repo_file(rel)
     for rel in sorted(copied):
         print(f"✅ {rel}")
