@@ -1,5 +1,7 @@
 # Fresh Market Lab: CI/CD with Declarative Automation Bundles
 
+Declarative Automation Bundles (DABs) were formerly called Databricks Asset Bundles; same feature, new name.
+
 A reference bundle for the DevOps team's repository layout, plus a 90-minute hands-on lab. You take a job
 built by hand in the workspace, bring it into a bundle, test your own copy, and see it promoted to
 production through a pull request, automated checks, and an approval gate. All of it happens in the
