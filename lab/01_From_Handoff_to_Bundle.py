@@ -58,13 +58,17 @@ link(f"/jobs/{legacy.job_id}", "Open the job in the UI")
 # MAGIC %md
 # MAGIC ## 1.2 · Bring the job into your bundle
 # MAGIC
-# MAGIC **In the UI (preferred):** open the job (link above), open the **⋮** menu at the top right, and choose
-# MAGIC **View as code** (or **Edit as YAML**). Copy the YAML into a new file in your Git folder:
-# MAGIC `resources/job_02_pl_store_kpi_alerts.job.yml`. If your Deployments panel offers **Add existing job**, you can
-# MAGIC use that instead.
+# MAGIC **First, see the job as code.** Every job you build in the UI already has a YAML version:
+# MAGIC 1. Click **Open the job in the UI** (the link above). The job opens in a new tab.
+# MAGIC 2. Open the **⋮** menu at the top right of the job page and choose **View as code**.
+# MAGIC 3. Choose **YAML**. That's the job's definition, in the same format a bundle uses. Close the dialog.
 # MAGIC
-# MAGIC **Or run the next cell.** It does the same thing: writes the job's YAML into `resources/` and copies its notebook
-# MAGIC into `src/`, exactly as they are, problems included.
+# MAGIC **Then save it into your bundle: run the next cell.** It writes two files into your Git folder, exactly as the
+# MAGIC job is today, problems included:
+# MAGIC - `resources/job_02_pl_store_kpi_alerts.job.yml`: the YAML you just looked at
+# MAGIC - `src/Job_02_Store_KPI_Alerts.py`: the notebook the job runs, so the bundle carries its own code
+# MAGIC
+# MAGIC ✅ You should see both files marked ✅. In the left sidebar, open your Git folder to find them.
 
 # COMMAND ----------
 
