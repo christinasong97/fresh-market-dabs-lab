@@ -1,0 +1,13 @@
+# Variables shared across store_ops (so_) resources.
+variables:
+  so_lookback_days:
+    description: Number of recent days used to judge store performance.
+    default: 14
+  so_underperform_threshold_pct:
+    description: A store is flagged when its sales attainment falls below this percent of target.
+    default: 85
+
+targets:
+  dev:
+    variables:
+      so_lookback_days: 7

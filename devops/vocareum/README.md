@@ -13,6 +13,7 @@ Vocareum provisions shared workspaces (about 50 attendees each) and runs our set
 2. Build `content.zip` with one root folder named `fresh_market_dabs_lab` containing:
    - `00_START_HERE.py`
    - `.assistant_workspace_instructions.md`
+   - `lab/` (the module notebooks, `_lab_helpers`, and `solutions/`)
    - `devops/lab_setup/` (all four files, including `legacy/`)
 3. Upload `config.json` (this folder) and `content.zip` with a fresh `manifest.mf` GUID.
 4. Set **users per workspace** to about 50 (serverless event guidance).

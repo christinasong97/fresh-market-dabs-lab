@@ -34,15 +34,15 @@ by hand.** Each module shows one or two platform features that make that possibl
 ### 1 · From handoff to bundle (10 min)
 - Open `Job_02_PL_Store_KPI_Alerts`. Point out: numbered name, `Task_01_`, personal email, hard-coded catalog.
 - Import it. "This YAML is exactly what you'd send DevOps today. It deploys. It just doesn't follow any of our rules."
-- Genie Code prompt card 1. Let it list the problems; it usually finds the hard-coded catalog first.
+- The Genie Code prompt in notebook 01 (step 1.3). Let it list the problems; it usually finds the hard-coded catalog first.
 
 ### 2 · The guardrails DevOps owns (10 min)
 - Open `.assistant_workspace_instructions.md`. "This is the wiki, written for Genie Code."
-- Prompt card 2. While it works: "Genie Code isn't guessing our conventions. It's reading them."
+- The prompt in notebook 02. While it works: "Genie Code isn't guessing our conventions. It's reading them."
 - Validate. Key message: **rules written once, followed by every developer and by the AI**.
 
 ### 3 · Build the bundle with Genie Code (20 min)
-- Prompt cards 3a and 3b. Point out `expect_all_or_drop` in silver vs `expect_all_or_fail` in gold, which is the
+- The prompts in notebook 03. Point out `expect_all_or_drop` in silver vs `expect_all_or_fail` in gold, which is the
   wiki's severity convention.
 - Open the dashboard and Genie space YAML. "The agent's tables, instructions, and example SQL are code. Change the
   gold table, and the Genie space change is in the same pull request."

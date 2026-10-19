@@ -8,5 +8,9 @@ extend-exclude = ["devops/lab_setup"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "W"]
 
+[tool.ruff.lint.per-file-ignores]
+# Module notebooks use names defined by %run ./_lab_helpers, and import inside cells.
+"lab/*.py" = ["F821", "E402"]
+
 [tool.ruff.lint.isort]
 known-first-party = ["expectations", "store_kpi_logic"]

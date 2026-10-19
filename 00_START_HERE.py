@@ -6,10 +6,9 @@
 # MAGIC test your own copy, and see how it gets to production through a pull request, automated checks, and an
 # MAGIC approval. Everything happens here in the workspace, with Genie Code. No terminal, no IDE.
 # MAGIC
-# MAGIC **Before you start:** you should be reading this from **your own Git folder** (created from
-# MAGIC `https://github.com/christinasong97/fresh-market-dabs-lab`), on the **`lab/start`** branch. If you're
-# MAGIC not, create the Git folder first: **Workspace → Create → Git folder**, paste the URL, then switch the
-# MAGIC branch to `lab/start`.
+# MAGIC **Before you start:** you should be reading this from **your own Git folder**. If you're not, create it
+# MAGIC first: **Workspace → Create → Git folder**, paste `https://github.com/christinasong97/fresh-market-dabs-lab`,
+# MAGIC and click **Create**. It opens on the `lab/start` branch, which is all you need for the whole lab.
 # MAGIC
 # MAGIC **Then run this notebook top to bottom.** It explains bundles, sets up the lab environment, and checks it.
 # MAGIC
@@ -147,10 +146,16 @@ print("Ready to go." if all(results) else "Something is missing. Re-run Step 1, 
 # MAGIC %md
 # MAGIC ## Step 3 · Start module 1
 # MAGIC
-# MAGIC 1. In this same Git folder, open **`databricks.yml`**. The **Deployments** panel (rocket icon) appears on
-# MAGIC    the side. That's where you'll validate and deploy all day.
-# MAGIC 2. Open **`lab/LAB_GUIDE.md`**. It has every step and every Genie Code prompt.
-# MAGIC 3. Go to **Jobs & Pipelines** and open **`Job_02_PL_Store_KPI_Alerts`**: the hand-built job you'll start with.
+# MAGIC The lab is a series of notebooks in the **`lab/`** folder of this Git folder. Open them in order:
 # MAGIC
-# MAGIC **Fell behind?** In your Git folder's branch picker, switch to the catch-up branch for the module you're on:
-# MAGIC `lab/01-imported`, `lab/02-restructured`, `lab/03-pipeline`, or `main` (complete).
+# MAGIC | Notebook | Module |
+# MAGIC |---|---|
+# MAGIC | `lab/01_From_Handoff_to_Bundle` | Turn a hand-built job into code, deploy it, run the team's checks |
+# MAGIC | `lab/02_Guardrails_with_Genie_Code` | Genie Code fixes the job using the DevOps team's rules |
+# MAGIC | `lab/03_Build_the_Bundle` | Add the sales pipeline and the orchestrator |
+# MAGIC | `lab/04_Run_Your_Own_Copy` | Run your copy; open your dashboard and Genie space |
+# MAGIC | `lab/05_Pull_Request_and_Checks` | How a change gets to production; catch a teammate's mistake |
+# MAGIC | `lab/06_Production_Is_Locked` | Why hand edits in production don't stick; wrap-up |
+# MAGIC
+# MAGIC Each notebook has numbered steps, the exact Genie Code prompts to paste, a "✅ you should see" after each step,
+# MAGIC and a **Catch up** cell at the end if you fall behind. You never need to switch branches.

@@ -8,8 +8,8 @@ production through a pull request, automated checks, and an approval gate. All o
 Databricks workspace UI with Genie Code.
 
 - **Attendees start here:** create a Git folder from this repo on `lab/start`, then open [`00_START_HERE`](00_START_HERE.py) in it and run it top to bottom
-- **Lab guide:** [lab/LAB_GUIDE.md](lab/LAB_GUIDE.md)
-- **Instructor talk track:** [lab/TALK_TRACK.md](lab/TALK_TRACK.md)
+- **Lab notebooks:** [`lab/`](lab), one per module (`01_From_Handoff_to_Bundle` … `06_Production_Is_Locked`)
+- **Instructor talk track:** [devops/instructor/TALK_TRACK.md](devops/instructor/TALK_TRACK.md)
 - **Delivering on Vocareum:** [devops/vocareum/README.md](devops/vocareum/README.md)
 
 ## What's in the bundle
@@ -60,6 +60,7 @@ devops/
   checks/run_rule_checks.py        # Runs tests/bundle inside the workspace
   lab_setup/00_lab_setup.py        # Admin-only, run once per workspace: everything outside the bundle
   vocareum/                        # Vocareum course config and packaging steps
+lab/                               # Module notebooks, shared helpers, and solutions/ for catching up
 .github/                           # CI, deploy, CODEOWNERS
 .assistant_workspace_instructions.md  # Genie Code instructions (the team's rules)
 ```
@@ -68,11 +69,9 @@ devops/
 
 | Branch | Use |
 |---|---|
-| `lab/start` | Where attendees begin: template (with a `dev` target), tests, CI, dashboard, and Genie space only |
-| `lab/01-imported` | Catch-up: legacy job imported as-is (fails the rule checks on purpose) |
-| `lab/02-restructured` | Catch-up: job restructured to the team standard |
-| `lab/03-pipeline` | Catch-up: pipeline and orchestrator added |
-| `main` / `develop` | Complete solution, promoted by CI |
+| `lab/start` (default) | **Attendees use only this branch.** Template, tests, CI, dashboard, Genie space, and the lab notebooks. Each module's catch-up files are in `lab/solutions/` |
+| `main` / `develop` | Complete solution; the instructor's pull request demo merges here and CI promotes it |
+| `feature/weekly-department-report` | The instructor's example pull request (with a planted rule violation) |
 
 ## Try the full flow yourself
 
