@@ -84,7 +84,7 @@ def run_job(key, quiet=False):
         for task in run.tasks or []:
             ts = task.state.result_state.value if task.state and task.state.result_state else task.state.life_cycle_state.value
             print(f"   - {task.task_key}: {ts}")
-    return run
+    return run if quiet else None
 
 
 def rule_checks():
@@ -95,7 +95,11 @@ def rule_checks():
         return
     logs = w.jobs.get_run_output(run.tasks[0].run_id).logs or ""
     logs = re.sub(r"\x1b\[[0-9;]*m", "", logs)
-    results = dict(re.findall(r"::(test_\w+)(?:\[[^\]]*\])? (PASSED|FAILED|SKIPPED)", logs))
+    results = {}
+    for test, result in re.findall(r"::(test_\w+)(?:\[[^\]]*\])? (PASSED|FAILED|SKIPPED)", logs):
+        # Parameterized tests appear once per target; any failure counts as a failure.
+        if results.get(test) != "FAILED":
+            results[test] = result
     if not results:
         print("Couldn't read the results. Open the job run to see the output.")
         return
@@ -107,8 +111,9 @@ def rule_checks():
     if failed:
         print(f"{len(failed)} rule(s) failed. Details:")
         for line in logs.splitlines():
-            if line.startswith("E  ") and ("must" in line or ".yml" in line or ".py:" in line or "->" in line):
-                print("   " + line[1:].strip())
+            text = line[1:].strip()
+            if line.startswith("E ") and text and not text.startswith(("assert ", "+", "-", "where")):
+                print("   " + text.replace("AssertionError: ", ""))
     else:
         print("All rules pass. This change would clear CI.")
 
@@ -126,7 +131,7 @@ def expect_files(paths):
         exists = _exists(p)
         ok &= exists
         print(f"{'✅' if exists else '❌'} {p}")
-    return ok
+    print("\nAll there." if ok else "\nSomething is missing. Check the step above, or use the Catch up cell at the end.")
 
 
 def show_file(rel):
@@ -218,33 +223,60 @@ def fix_teammates_change():
     print("✅ Failure emails now go to ${var.notification_email}")
 
 
+def _list_all(path, key):
+    # Plain REST calls, so this works whatever SDK version the notebook has.
+    items, token = [], None
+    while True:
+        query = {"page_size": 100, **({"page_token": token} if token else {})}
+        page = w.api_client.do("GET", path, query=query)
+        items += page.get(key, [])
+        token = page.get("next_page_token")
+        if not token:
+            return items
+
+
 def find_dev_dashboard():
+    """Your deployed dev dashboard as {"id", "name"}, or None."""
     prefix = dev_prefix() or "[dev"
-    for d in w.lakeview.list():
-        if d.display_name and d.display_name.startswith(prefix) and "Store Performance" in d.display_name:
-            return d
+    for d in _list_all("/api/2.0/lakeview/dashboards", "dashboards"):
+        name = d.get("display_name", "")
+        if name.startswith(prefix) and "Store Performance" in name:
+            return {"id": d["dashboard_id"], "name": name}
     return None
 
 
 def find_dev_genie_space():
+    """Your deployed dev Genie space as {"id", "name"}, or None."""
     prefix = dev_prefix() or "[dev"
-    for s in w.genie.list_spaces().spaces or []:
-        if s.title and s.title.startswith(prefix) and "Store Ops Genie" in s.title:
-            return s
+    for s in _list_all("/api/2.0/genie/spaces", "spaces"):
+        title = s.get("title", "")
+        if title.startswith(prefix) and "Store Ops Genie" in title:
+            return {"id": s["space_id"], "name": title}
     return None
 
 
 def ask_genie(question):
+    """Ask your dev Genie space a question and print the SQL it wrote and its answer."""
     space = find_dev_genie_space()
     if space is None:
-        print("❌ No dev Genie space yet. Deploy the bundle first.")
+        print("❌ No dev Genie space yet. Run the cell in 4.3, then deploy again.")
         return
-    msg = w.genie.start_conversation_and_wait(space.space_id, question)
-    for att in msg.attachments or []:
-        if att.query:
-            print("SQL Genie wrote:\n  " + att.query.query.replace("\n", "\n  "))
-        if att.text:
-            print("\n" + att.text.content)
+    base = f"/api/2.0/genie/spaces/{space['id']}"
+    started = w.api_client.do("POST", f"{base}/start-conversation", body={"content": question})
+    path = f"{base}/conversations/{started['conversation_id']}/messages/{started['message_id']}"
+    for _ in range(60):
+        msg = w.api_client.do("GET", path)
+        if msg.get("status") in ("COMPLETED", "FAILED", "CANCELLED"):
+            break
+        time.sleep(3)
+    if msg.get("status") != "COMPLETED":
+        print(f"❌ Genie didn't finish ({msg.get('status')}). Try asking in the Genie space itself.")
+        return
+    for att in msg.get("attachments") or []:
+        if att.get("query"):
+            print("SQL Genie wrote:\n  " + att["query"]["query"].replace("\n", "\n  "))
+        if att.get("text"):
+            print("\n" + att["text"]["content"])
 
 
 print(f"Helpers loaded for {ME}")
