@@ -26,6 +26,8 @@
 # MAGIC | **`.assistant_workspace_instructions.md`**, top of your Git folder | The source. DevOps changes it by pull request. |
 # MAGIC | **`/Workspace/.assistant_workspace_instructions.md`** | The copy Genie Code reads. `00_START_HERE` published it. |
 # MAGIC
+# MAGIC Only workspace administrators can add or edit instructions that apply to all users across the workspace.
+# MAGIC
 # MAGIC Run the cell to read the rules and check the published copy matches the one in your Git folder.
 
 # COMMAND ----------
