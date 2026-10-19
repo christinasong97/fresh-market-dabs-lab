@@ -2,8 +2,28 @@
 # MAGIC %md
 # MAGIC # Module 3 · Build the bundle with Genie Code (20 min)
 # MAGIC
-# MAGIC **Goal:** add the sales pipeline that feeds your KPI job, plus an orchestrator job that runs everything in order.
-# MAGIC By the end, one bundle holds jobs, a pipeline, and a dashboard. (The Genie space joins in module 4.)
+# MAGIC **Goal:** put the whole store sales data product in one bundle: the data, the job that uses it, the run order,
+# MAGIC and the dashboard.
+# MAGIC
+# MAGIC ### Why this module
+# MAGIC
+# MAGIC Your KPI job from module 2 reads `gold_daily_store_sales`, but nothing creates that table yet. Today, a table
+# MAGIC like this comes from another job, the run order lives in job names (`Job_00` → `Job_01` → `Job_02`), and each
+# MAGIC piece is rebuilt by hand in every environment. If one piece reaches production without the other, it breaks.
+# MAGIC
+# MAGIC In this module, every piece goes into the same bundle:
+# MAGIC
+# MAGIC | Piece | What it does | Where it comes from |
+# MAGIC |---|---|---|
+# MAGIC | Pipeline `so_sales_medallion` | Turns raw sales files into clean tables, like `gold_daily_store_sales` | You, in 3.1 |
+# MAGIC | Job `so_store_kpis` | Flags stores that are behind their sales target | Module 2 |
+# MAGIC | Orchestrator `so_orchestrator` | Runs the pipeline first, then the KPI job | You, in 3.2 |
+# MAGIC | Dashboard `so_store_performance` | Shows the results | Already in the bundle (3.3) |
+# MAGIC
+# MAGIC **One bundle means:** reviewed together in one pull request, deployed together with one click, and promoted
+# MAGIC together to cert and prod. Nothing reaches production without the pieces it depends on.
+# MAGIC
+# MAGIC (The Genie space joins in module 4, once the tables exist.)
 
 # COMMAND ----------
 
@@ -13,6 +33,18 @@
 
 # MAGIC %md
 # MAGIC ## 3.1 · The pipeline
+# MAGIC
+# MAGIC **Why it matters:** a pipeline is a bundle resource just like a job. It uses the same variables (no hard-coded
+# MAGIC catalog), the same naming rules, and the same rule checks. Its data quality rules (**expectations**: what counts
+# MAGIC as a bad row) are code files too, so changing them goes through a pull request like any other change.
+# MAGIC
+# MAGIC The pipeline builds three layers of tables, often called a **medallion**:
+# MAGIC
+# MAGIC | Layer | What it holds |
+# MAGIC |---|---|
+# MAGIC | **Bronze** | The raw sales files, loaded as they arrive |
+# MAGIC | **Silver** | Cleaned data, with bad rows dropped |
+# MAGIC | **Gold** | Business-ready totals, like daily sales per store, that the KPI job and dashboard read |
 # MAGIC
 # MAGIC Ask Genie Code (agent mode):
 # MAGIC
@@ -33,6 +65,9 @@
 # MAGIC
 # MAGIC Notice the severity convention: **drop** bad rows in silver, **fail** the run if gold breaks a rule, so nobody
 # MAGIC downstream ever sees bad data.
+# MAGIC
+# MAGIC ✅ When it's done, run the cell. You should see the pipeline's YAML file, its code in `transformations/`, and its
+# MAGIC data quality rules in `expectations/`, all inside your Git folder.
 
 # COMMAND ----------
 
@@ -52,8 +87,9 @@ for root, dirs, files in os.walk(f"{REPO_ROOT}/src/store_ops/pipelines/sales_med
 # MAGIC %md
 # MAGIC ## 3.2 · The orchestrator
 # MAGIC
-# MAGIC The old way encodes run order in file names (`Job_00`, `Job_01`, `Job_02`). The team's standard puts it in one
-# MAGIC orchestrator per domain. Ask Genie Code:
+# MAGIC **Why it matters:** today, run order is encoded in names (`Job_00`, `Job_01`, `Job_02`) and in people's heads.
+# MAGIC The team's standard puts it in one **orchestrator** job per domain, so the order is written down, reviewed, and
+# MAGIC the same in every environment. Ask Genie Code:
 # MAGIC
 # MAGIC ```
 # MAGIC Create resources/jobs/store_ops/orchestrator.job.yml with a job called so_orchestrator: first refresh the
@@ -68,12 +104,43 @@ show_file("resources/jobs/store_ops/orchestrator.job.yml")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC **Read these lines in the YAML above:**
+# MAGIC
+# MAGIC | Line | What it means |
+# MAGIC |---|---|
+# MAGIC | `pipeline_id: ${resources.pipelines.so_sales_medallion.id}` | "Run the pipeline from this bundle." |
+# MAGIC | `job_id: ${resources.jobs.so_store_kpis.id}` | "Then run the KPI job from this bundle." |
+# MAGIC | `depends_on: - task_key: refresh_sales` | "Only after the pipeline finishes." |
+# MAGIC
+# MAGIC The orchestrator points at the pipeline and the job by their **resource keys**, not by ID. Every environment
+# MAGIC gives them different IDs, so a hard-coded ID would only work in one place. These lines work in dev, int, cert,
+# MAGIC and prod, and on deploy the bundle creates the pipeline and the job before the orchestrator that needs them.
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## 3.3 · The dashboard was already code
 # MAGIC
-# MAGIC It came with the starter repo and points at the tables your pipeline just defined. Its queries use bare table
-# MAGIC names; `dataset_catalog` and `dataset_schema` point them at `${var.catalog}` and your schema, so the same file
-# MAGIC shows your data in dev and production data in prod. (The Genie space joins the bundle in module 4, once its
-# MAGIC tables exist.)
+# MAGIC **Why it matters:** a dashboard has the same problem as the job in module 1. If its queries say
+# MAGIC `fresh_market_lab_int.store_ops.gold_daily_store_sales`, it only ever shows INT data, and someone has to edit every
+# MAGIC query to move it to prod.
+# MAGIC
+# MAGIC In a bundle, a dashboard is two files:
+# MAGIC
+# MAGIC | File | What it holds |
+# MAGIC |---|---|
+# MAGIC | `src/store_ops/dashboards/store_performance.lvdash.json` | The dashboard itself: pages, charts, and queries, as built in the UI |
+# MAGIC | `resources/dashboards/store_ops/so_store_performance.dashboard.yml` | Where it deploys and which data it reads |
+# MAGIC
+# MAGIC The queries use bare table names (`FROM gold_daily_store_sales`). Two lines in the YAML fill in the rest:
+# MAGIC
+# MAGIC | Line | What it means |
+# MAGIC |---|---|
+# MAGIC | `dataset_catalog: ${var.catalog}` | Read from this target's catalog |
+# MAGIC | `dataset_schema: ${resources.schemas.so_store_ops.name}` | ...and this target's schema |
+# MAGIC
+# MAGIC Same dashboard file: your data in dev, production data in prod. It deploys with the pipeline that feeds it, so
+# MAGIC the charts and the tables they read always move to production together.
 
 # COMMAND ----------
 
