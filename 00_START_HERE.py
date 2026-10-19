@@ -78,7 +78,7 @@
 # MAGIC |---|---|
 # MAGIC | Catalogs `fresh_market_lab_int`, `_cert`, `_prod` | One catalog per target |
 # MAGIC | `landing.raw` volume with synthetic POS data | The "source system" your pipeline reads |
-# MAGIC | SQL warehouse `fresh_market_lab_warehouse` | Your dashboard and Genie space |
+# MAGIC | SQL warehouse `Serverless Starter Warehouse` (already in Free Edition) | Your dashboard and Genie space |
 # MAGIC | Job `Job_02_PL_Store_KPI_Alerts` | The hand-built job you start with in module 1 |
 # MAGIC | `/Workspace/.assistant_workspace_instructions.md` | The DevOps team's rules for Genie Code |
 # MAGIC
@@ -91,7 +91,7 @@ import os
 from databricks.sdk import WorkspaceClient
 
 PREFIX = "fresh_market_lab"
-WAREHOUSE = f"{PREFIX}_warehouse"
+WAREHOUSE = "Serverless Starter Warehouse"  # Free Edition allows one warehouse; reuse the built-in one
 LEGACY_JOB = "Job_02_PL_Store_KPI_Alerts"
 INSTRUCTIONS = "/Workspace/.assistant_workspace_instructions.md"
 
