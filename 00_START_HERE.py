@@ -1,4 +1,8 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# environment_version = "6"
+# ///
 # MAGIC %md
 # MAGIC # Welcome: CI/CD with Declarative Automation Bundles
 # MAGIC
@@ -86,6 +90,7 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Step 1 · Set up the lab environment
 import os
 
 from databricks.sdk import WorkspaceClient

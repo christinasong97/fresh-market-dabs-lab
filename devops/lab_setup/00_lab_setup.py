@@ -117,6 +117,7 @@ else:
 
 # COMMAND ----------
 
+# DBTITLE 1,SQL warehouse
 from databricks.sdk import WorkspaceClient  # noqa: E402
 from databricks.sdk.service import iam, jobs, sql, workspace  # noqa: E402
 
@@ -129,7 +130,7 @@ if existing:
 else:
     warehouse_id = w.warehouses.create(
         name=warehouse_name,
-        cluster_size="Small",
+        cluster_size="2X-Small",
         min_num_clusters=1,
         max_num_clusters=4,
         auto_stop_mins=10,
