@@ -4,6 +4,10 @@
 # MAGIC
 # MAGIC **Goal:** see how a change gets to production without anyone rebuilding it by hand.
 # MAGIC
+# MAGIC Your alert works in dev. Now it has to reach production, where Store Ops depends on it every morning. This is
+# MAGIC where the handoff to DevOps used to be: send the definition, wait, and hope it gets rebuilt the same way. With a
+# MAGIC bundle, the same files you tested go to production, and a few automatic gates make sure they're safe.
+# MAGIC
 # MAGIC Your instructor shows the real pull request on screen. Then you catch the same mistake yourself, in your copy.
 # MAGIC
 # MAGIC **What's a pull request (PR)?** A request to merge your branch into the shared `main` branch. It shows exactly
@@ -33,6 +37,15 @@
 # MAGIC 4. Merge → deploy to **cert** as the service principal → the orchestrator runs as the integration test.
 # MAGIC 5. **Prod** waits for an approver. The instructor approves; the same files deploy to prod.
 # MAGIC
+# MAGIC **Why each gate exists:**
+# MAGIC
+# MAGIC | Gate | What it protects |
+# MAGIC |---|---|
+# MAGIC | **Automated checks** | The team's rules are enforced on every change, so nobody has to remember them |
+# MAGIC | **CODEOWNERS review** | DevOps must approve changes to its files: targets, shared variables, checks, Genie Code rules |
+# MAGIC | **Cert run** | The orchestrator runs end to end on cert data before prod sees anything |
+# MAGIC | **Prod approval** | A person signs off on the final step, and their name is recorded |
+# MAGIC
 # MAGIC Every production change leaves a record: the PR, the diff, the checks, the approver, and the deploy log.
 # MAGIC You can browse them in the repo's **Pull requests** and **Actions** tabs.
 
@@ -50,6 +63,9 @@ displayHTML(
 # MAGIC ## 5.2 · Try it: catch the teammate's mistake yourself
 # MAGIC
 # MAGIC This cell adds the teammate's new job to **your** Git folder, exactly as it was in their pull request.
+# MAGIC
+# MAGIC **Why it matters:** the mistake is easy to make and hard to spot in review. The job works fine, but when it
+# MAGIC fails, only Jane hears about it, and Jane might be on vacation. A rule catches it every time.
 
 # COMMAND ----------
 
@@ -76,6 +92,9 @@ rule_checks()
 # MAGIC Or run the next cell. Then redeploy and rerun the checks.
 # MAGIC
 # MAGIC ✅ You should see every rule pass.
+# MAGIC
+# MAGIC **Why it matters:** it's a one-line fix, made by the person who made the change, before it ever reaches
+# MAGIC production. Nobody in DevOps had to find it or fix it for them.
 
 # COMMAND ----------
 

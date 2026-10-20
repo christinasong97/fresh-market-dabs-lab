@@ -3,6 +3,10 @@
 # MAGIC # Module 6 · Production is locked (5 min)
 # MAGIC
 # MAGIC **Goal:** see why hand edits in production don't stick, and why that's a good thing.
+# MAGIC
+# MAGIC Your alert is in production. It's 6am, a district manager wants the threshold changed, and someone with access
+# MAGIC is tempted to edit the job in the UI. Today that quick fix works, and then production no longer matches what
+# MAGIC was tested, reviewed, or written down anywhere. With a bundle, Git is the record of what production should be.
 
 # COMMAND ----------
 
@@ -17,6 +21,10 @@
 # MAGIC    is managed by a bundle.
 # MAGIC 2. The next deploy from `main` puts the schedule back. **Git is the source of truth.**
 # MAGIC 3. Everyone except the service principal has **Can View** on production. You can look, not change.
+# MAGIC
+# MAGIC **Why it matters:** the right way to change production is the same path you just used: change the files, open a
+# MAGIC pull request, pass the checks, get approval. It takes minutes, and it leaves a record. A hand edit leaves none,
+# MAGIC and the next deploy erases it anyway.
 
 # COMMAND ----------
 
@@ -24,6 +32,13 @@
 # MAGIC ## 6.2 · Check who can change production
 # MAGIC
 # MAGIC This lists the production jobs (if they've been deployed in this workspace) and who can manage them.
+# MAGIC
+# MAGIC | Permission | Who has it | What it allows |
+# MAGIC |---|---|---|
+# MAGIC | **Can Manage** | The CI/CD service principal | Change and deploy production |
+# MAGIC | **Can View** | Everyone else | See the jobs, runs, and results |
+# MAGIC
+# MAGIC Production doesn't belong to whoever built it, so nothing breaks when people change teams or leave.
 
 # COMMAND ----------
 
