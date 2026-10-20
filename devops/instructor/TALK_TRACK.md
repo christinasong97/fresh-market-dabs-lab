@@ -464,6 +464,7 @@ It removes the teammate's job from `main` (through a pull request, since `main` 
 | Genie Code is slow or wrong | Uncomment and run the module's **Catch up** cell, then redeploy |
 | Genie Code says "action denied" | A safety guardrail on risky actions. Approve what's expected; it carries on |
 | `No dev copy of ... yet` | The attendee didn't deploy first. Deploy `dev`, then rerun the cell |
+| `dashboard ... has been modified remotely` | The deployed dev dashboard was edited directly (in the UI or by Genie Code), not the file. Delete any new `resources/*dashboard.yml` Genie Code added. The Deployments panel can't override this; from a terminal, `databricks bundle deploy -t dev --force` in a clone of the same branch overwrites the edit. Otherwise use the backup screen |
 | Deploy fails on the Genie space | The tables don't exist yet. It only joins in module 4, after the orchestrator runs |
 | `rule_checks()` says it couldn't run the checks | Rerun the cell once (the first run installs pytest) |
 | Serverless is slow | Keep talking: each slow step above has filler ideas. Use the backup recording for module 4 |

@@ -111,7 +111,9 @@ else:
 # MAGIC
 # MAGIC 1. **Ask Genie Code:**
 # MAGIC    ```
-# MAGIC    Add a bar chart of net sales by store_format to src/store_ops/dashboards/store_performance.lvdash.json.
+# MAGIC    Edit the file src/store_ops/dashboards/store_performance.lvdash.json in this Git folder: add a bar chart of
+# MAGIC    net sales by store_format, using a bare table name like the other datasets. Only edit that file. Don't edit
+# MAGIC    the deployed dashboard and don't create any other files.
 # MAGIC    ```
 # MAGIC 2. **See the change:** click the branch name at the top of your Git folder in Databricks. The Git dialog lists the
 # MAGIC    changed file; click it to see the diff.
@@ -120,6 +122,11 @@ else:
 # MAGIC
 # MAGIC **Why it matters:** that one-file diff is exactly what you'd put in a pull request. A reviewer sees the change, the
 # MAGIC checks run, and the same file goes to prod.
+# MAGIC
+# MAGIC **Change the file, not the deployed dashboard.** Your `[dev ...]` dashboard is owned by the bundle. If it's edited
+# MAGIC directly, in the dashboard editor or by Genie Code, the next deploy stops with *"dashboard ... has been modified
+# MAGIC remotely"*. That's a guardrail too: the bundle refuses to quietly overwrite changes that aren't in Git. In prod,
+# MAGIC it's what keeps hand edits from being lost without anyone noticing. If you see it, ask your instructor.
 
 # COMMAND ----------
 
