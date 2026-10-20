@@ -306,15 +306,23 @@ read, and the same file goes to prod."
 
 ## Module 5 · Pull request and checks (20 min)
 
-**CLICK** `lab/05_Pull_Request_and_Checks`, then **CLICK** the promotion diagram in 5.1.
+**CLICK** `lab/05_Pull_Request_and_Checks`, then **CLICK** the two-part table at the top.
 
 **SAY** "Your alert works in dev. This is where the handoff to DevOps used to be. Now the files you tested go to
-production through automatic gates."
+production through automatic gates. Part 1 is on my screen: just watch. Part 2 is your turn."
 
-**CLICK** GitHub → **Pull requests** → the teammate's PR (switch to your screen):
+### Part 1 · Watch: the path to production (about 10 min, your screen)
+
+**CLICK** the four-word table (branch, pull request, checks, deploy pipeline). **ASK** "Who here has opened a pull
+request before?" Pitch the next few minutes to the answer.
+
+**CLICK** the path diagram. **SAY** "Left to right: a teammate's branch, a pull request with checks, a merge, cert,
+an approval, prod."
+
+**CLICK** GitHub → **Pull requests** → the teammate's PR:
 1. **CLICK** **Files changed**: the new job, with `jane.doe@example.com`.
 2. **CLICK** **Checks**: `test_failure_notifications_go_to_a_group` failed, merge blocked.
-3. Push the fix (`${var.notification_email}`). The checks go green.
+3. Push the fix (`${var.notification_email}`). The checks go green. Approve the review.
 4. Merge. **CLICK** **Actions**: deploy to cert as the service principal, then the orchestrator runs as the
    integration test.
 5. **CLICK** the prod deploy waiting for review → **Approve**.
@@ -327,11 +335,19 @@ anything."
 **SAY** (on classic compute) "Your production jobs run on classic clusters with policies. A bundle handles that with
 `job_clusters` and a policy, and the rule checks already enforce it. The lab uses serverless so it starts fast."
 
-**Now attendees:** **RUN** 5.2 (`add_teammates_change()`), Deploy, **RUN** `rule_checks()`. **CHECK** one ❌.
+**IF** CI deploys aren't set up in your production demo workspace: show steps 1 to 3 live (the checks run on GitHub
+without Databricks), then show steps 4 and 5 from screenshots or a recording.
 
-**SAY** "The same check that blocked the PR, in your copy, in seconds."
+### Part 2 · Your turn (about 10 min, everyone)
 
-**RUN** 5.3 (the fix, or ask Genie Code), redeploy, **RUN** `rule_checks()`. **CHECK** all ✅.
+**SAY** "You can't open a pull request on the shared repo, so you'll reproduce the moment that mattered: the check
+that blocked the merge."
+
+**RUN** Step 1 (`add_teammates_change()`). **CLICK** Step 2: Deploy, then **RUN** `rule_checks()`. **CHECK** one ❌.
+
+**SAY** "It deployed fine, and it still breaks a rule. The same check that blocked the PR, in your copy, in seconds."
+
+**RUN** Step 3 (the fix, or ask Genie Code), redeploy, **RUN** `rule_checks()`. **CHECK** all ✅.
 
 ## Module 6 · Production is locked (5 min)
 
