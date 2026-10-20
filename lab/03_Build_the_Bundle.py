@@ -104,11 +104,18 @@ show_file("resources/jobs/store_ops/orchestrator.job.yml")
 # MAGIC %md
 # MAGIC **Read these lines in the YAML above:**
 # MAGIC
-# MAGIC | Line | What it means |
-# MAGIC |---|---|
-# MAGIC | `pipeline_id: ${resources.pipelines.so_sales_medallion.id}` | "Run the pipeline from this bundle." |
-# MAGIC | `job_id: ${resources.jobs.so_store_kpis.id}` | "Then run the KPI job from this bundle." |
-# MAGIC | `depends_on: - task_key: refresh_sales` | "Only after the pipeline finishes." |
+# MAGIC ```
+# MAGIC tasks:
+# MAGIC   - task_key: refresh_sales
+# MAGIC     pipeline_task:
+# MAGIC       pipeline_id: ${resources.pipelines.so_sales_medallion.id}   ← run the pipeline from this bundle
+# MAGIC
+# MAGIC   - task_key: publish_store_kpis
+# MAGIC     depends_on:
+# MAGIC       - task_key: refresh_sales                                    ← only after the pipeline finishes
+# MAGIC     run_job_task:
+# MAGIC       job_id: ${resources.jobs.so_store_kpis.id}                   ← then run the KPI job from this bundle
+# MAGIC ```
 # MAGIC
 # MAGIC The orchestrator points at the pipeline and the job by their **resource keys**, not by ID. Every environment
 # MAGIC gives them different IDs, so a hard-coded ID would only work in one place. These lines work in dev, int, cert,
