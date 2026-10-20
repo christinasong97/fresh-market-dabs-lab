@@ -4,15 +4,16 @@
 # MAGIC
 # MAGIC **Goal:** get a change to production the way your team will: through guardrails and policies, not by hand.
 # MAGIC
-# MAGIC Modules 1 to 4 were the **inner loop**: you built, checked, and deployed your own copy. This module is the
-# MAGIC **outer loop**, the part DevOps used to do by hand:
+# MAGIC ![The CI/CD cycle, from Develop to Deploy to Production](./images/cicd_cycle.png)
 # MAGIC
-# MAGIC ```
-# MAGIC  INNER LOOP (you, modules 1-4)                 OUTER LOOP (CI/CD, this module)
-# MAGIC  build ──► check ──► deploy dev ──►  pull request ──► CI checks ──► cert + test ──► approval ──► prod
-# MAGIC ```
+# MAGIC | Part of the cycle | In this lab |
+# MAGIC |---|---|
+# MAGIC | **Develop, Build, Test** | Modules 1 to 4: you built the bundle, ran the checks, and deployed your own `dev` copy |
+# MAGIC | **Version Control** | 5.2: the change goes into Git as a pull request, and CI runs the checks |
+# MAGIC | **Deploy to Stage** | 5.4: CI deploys to **cert** and runs the orchestrator as a test |
+# MAGIC | **Deploy to Production** | 5.4: after approval, CI deploys the same files to **prod** |
 # MAGIC
-# MAGIC Every step in the outer loop is a **policy written as code**:
+# MAGIC The right half is the part DevOps used to do by hand. Every step in it is a **policy written as code**:
 # MAGIC
 # MAGIC | Question | The policy | Step |
 # MAGIC |---|---|---|
