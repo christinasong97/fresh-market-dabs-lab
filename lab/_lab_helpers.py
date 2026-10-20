@@ -12,6 +12,7 @@ import subprocess
 import sys
 import time
 
+import yaml
 from databricks.sdk import WorkspaceClient
 
 w = WorkspaceClient()
@@ -180,6 +181,15 @@ LEGACY_JOB_NAME = "Job_02_PL_Store_KPI_Alerts"
 LEGACY_NOTEBOOK_COPY = "src/Job_02_Store_KPI_Alerts.py"
 
 
+def _defines_legacy_job(path):
+    # Match on the job's name, not on any mention of it, so a comment like "replaces Job_02" doesn't count.
+    try:
+        jobs = (yaml.safe_load(open(path)) or {}).get("resources", {}).get("jobs") or {}
+    except yaml.YAMLError:
+        return False
+    return any((job or {}).get("name") == LEGACY_JOB_NAME for job in jobs.values())
+
+
 def imported_job_files():
     """The Job_02 files brought into the bundle in module 1, by the cell or by Add existing job."""
     found = []
@@ -187,11 +197,20 @@ def imported_job_files():
         dirs[:] = [d for d in dirs if d not in (".git", "lab", "devops", "tests")]
         for name in files:
             path = os.path.join(folder, name)
-            if name.endswith((".yml", ".yaml")) and LEGACY_JOB_NAME in open(path).read():
+            if name.endswith((".yml", ".yaml")) and _defines_legacy_job(path):
                 found.append(os.path.relpath(path, REPO_ROOT))
     if _exists(LEGACY_NOTEBOOK_COPY):
         found.append(LEGACY_NOTEBOOK_COPY)
     return sorted(found)
+
+
+def remove_imported_job():
+    """Remove the Job_02 files imported in module 1, now that so_store_kpis replaces them."""
+    files = imported_job_files()
+    for rel in files:
+        remove_repo_file(rel)
+        print(f"🗑  removed {rel}")
+    print("\nOld Job_02 files removed." if files else "No old Job_02 files left. Nothing to remove.")
 
 
 def show_imported_job():

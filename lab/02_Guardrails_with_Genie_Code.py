@@ -42,7 +42,7 @@ print("✅ The published copy matches your Git folder." if same else "⚠️  Th
 # MAGIC %md
 # MAGIC ## 2.2 · Ask Genie Code to restructure the job
 # MAGIC
-# MAGIC Open Genie Code (agent mode) from your Git folder and paste:
+# MAGIC Open **Genie Code** (agent mode) from your Git folder in Databricks and paste:
 # MAGIC
 # MAGIC ```
 # MAGIC Restructure the imported Job_02 job (its YAML file in resources/ and the notebook it runs) to follow our
@@ -53,16 +53,26 @@ print("✅ The published copy matches your Git folder." if same else "⚠️  Th
 # MAGIC Put the KPI logic in src/store_ops/lib/store_kpi_logic.py as pure functions, keep the notebook thin in
 # MAGIC src/store_ops/notebooks/store_kpis/, and add a condition task so a notify step only runs when stores are
 # MAGIC flagged. Put the lookback days and threshold in resources/jobs/store_ops/_domain.vars.yml.
-# MAGIC Delete the imported files in this Git folder when you're done. Don't change anything outside this Git folder.
+# MAGIC Don't delete any files; I'll remove the old ones. Don't change anything outside this Git folder.
 # MAGIC ```
+# MAGIC
+# MAGIC **This takes about 5 minutes.** Genie Code works in several steps: it reads the team's rules, plans the files,
+# MAGIC writes them, and checks its own work.
 # MAGIC
 # MAGIC **While it works:** Genie Code isn't guessing your conventions; it's reading them. Watch for the name pattern,
 # MAGIC the `so_` prefix, `${var.notification_email}`, tags, and no hard-coded catalog.
+# MAGIC
+# MAGIC **If it asks you to approve an action, or says an action was denied:** that's a safety guardrail, not an error.
+# MAGIC Genie Code can't run risky actions, like deleting files or changing things outside your Git folder, without
+# MAGIC you. Approve what you expect, and it carries on.
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 2.3 · Check the files Genie Code created
+# MAGIC ## 2.3 · Check the files, then remove the old ones
+# MAGIC
+# MAGIC The first cell checks the files Genie Code created. The second removes the imported Job_02 files from module 1:
+# MAGIC Genie Code's version replaces them.
 
 # COMMAND ----------
 
@@ -73,10 +83,12 @@ expect_files(
         "src/store_ops/lib/store_kpi_logic.py",
     ]
 )
-for old in imported_job_files():
-    print(f"⚠️  {old} still exists. Ask Genie Code to delete it (or delete it yourself).")
 print()
 show_file("resources/jobs/store_ops/so_store_kpis.job.yml")
+
+# COMMAND ----------
+
+remove_imported_job()
 
 # COMMAND ----------
 

@@ -136,12 +136,19 @@ fine.
 **SAY** "The team's rules are one Markdown file in the repo. DevOps changes it by pull request, and setup publishes
 it to the workspace, where Genie Code reads it for everyone. Only workspace admins can edit the published copy."
 
-**RUN** 2.2: paste the prompt into Genie Code (agent mode). **WAIT** 2 to 4 minutes. While it works:
+**RUN** 2.2: paste the prompt into Genie Code (agent mode). **WAIT** about 5 minutes. While it works:
 - **SAY** "Genie Code isn't guessing our conventions. It's reading them. Watch for the `so_` prefix, the naming
   pattern, `${var.notification_email}`, the tags."
 - **CLICK** Genie Code's panel and narrate its plan as it goes.
+- **SAY** (when someone sees "action denied" or an approval request) "That's a safety guardrail, not a bug. Genie
+  Code can't run risky actions, like deleting files or touching anything outside your Git folder, without you.
+  That's what you want from an agent with access to your workspace." The prompt tells it not to delete files, so
+  these should be rare, but if they appear, it's a good moment to point at.
 
-**RUN** 2.3. **CHECK** three ✅ and no ⚠️ for leftover Job_02 files.
+**RUN** 2.3: the first cell checks Genie Code's files, the second (`remove_imported_job()`) removes the old Job_02
+files. **CHECK** three ✅, then "Old Job_02 files removed."
+
+**SAY** "We remove the old files with a cell, not with Genie Code, so the agent never has to delete anything."
 
 **CLICK** 2.4: Deploy, then **RUN** `rule_checks()`. **CHECK** all ✅.
 
@@ -172,9 +179,16 @@ minutes. See **While Genie Code builds the pipeline** below.
 resource key, not by an ID. Every environment has different IDs; this line works in all of them. And the run order
 is in `depends_on`, not in job names."
 
-**RUN** 3.3. **SAY** "The dashboard has the same problem the job had: a hard-coded catalog would pin it to INT. Its
-queries use bare table names, and two lines in the YAML fill in this target's catalog and schema. Same file, dev data
-in dev, prod data in prod."
+**CLICK** 3.3, the dashboard sketch. **SAY** "This is what everything in this module feeds: the Store Performance
+dashboard district managers open each morning. It's already in the bundle. The tables it reads don't exist yet; the
+orchestrator builds them in module 4, and then you'll open it with your own data."
+
+**CLICK** the table that maps each chart to its table and who builds it. **ASK** "Which of these breaks if the
+pipeline doesn't run?" (All of them, which is why they deploy together.)
+
+**RUN** the 3.3 cell. **SAY** "The dashboard has the same problem the job had: a hard-coded catalog would pin it to
+INT. Its queries use bare table names, and two lines in the YAML fill in this target's catalog and schema. Same file,
+dev data in dev, prod data in prod."
 
 **CLICK** 3.4: Deploy, **RUN** `rule_checks()`. **CHECK** all ✅.
 
@@ -228,7 +242,10 @@ and keep going. They can look at Genie Code's version later.
 **SAY** "Many team templates deploy every target in production mode, so there's no safe place to test your own copy.
 The `dev` target is that place: your name on everything, your own schema, schedules paused."
 
-**CLICK** 4.1: Deploy. **RUN** `run_job("so_orchestrator")`. **WAIT** 3 to 5 minutes. While it runs:
+**CLICK** 4.1, Step 1: Deployments panel → `dev` → **Deploy**, and wait for it to finish. **SAY** "The cell runs your
+deployed copy, so always deploy first."
+
+**RUN** Step 2, `run_job("so_orchestrator")`. **WAIT** 3 to 5 minutes. While it runs:
 - **CLICK** the run link. Show the two tasks: the pipeline first, then the KPI job.
 - **SAY** "This is the same morning run prod does at 6am, in the right order, because the order is in the
   orchestrator."
@@ -242,12 +259,16 @@ The `dev` target is that place: your name on everything, your own schema, schedu
 **SAY** "Those are the silver rules at work: a register glitch never reaches a district manager's report. And this
 is the list Store Ops follows up on."
 
-**RUN** 4.3 (adds the Genie space), then Deploy again.
+**RUN** 4.3 (adds the Genie space's file). **CLICK** Deploy again. **SAY** "The cell only adds the file. Deploying is
+what creates the Genie space."
 
 **SAY** "A Genie space can only be created once its tables exist, which is why it joins now. Its instructions and
 example questions are code, reviewed in the same pull request as the tables."
 
-**RUN** 4.4. **CLICK** the dashboard link, then the Genie space link. **RUN** `ask_genie(...)`.
+**RUN** 4.4. **CLICK** the dashboard link. **SAY** "This is the dashboard from 3.3, now with our data." Then **CLICK**
+the Genie space link and **RUN** `ask_genie(...)`.
+
+**IF** there's no Genie space link: that attendee didn't deploy after 4.3. Deploy, then rerun the cell.
 
 **CHECK** About six underperforming stores.
 
@@ -257,6 +278,10 @@ one bundle."
 **RUN** 4.5 (`rule_checks()`). **CHECK** all ✅. **RUN** 4.6 and compare `dev` with `prod`.
 
 **SAY** "Same resources. Different catalog, different identity, locked permissions. Nobody edits a file to promote."
+
+**Optional, if there's time:** the dashboard change at the end of module 4. Ask Genie Code for a "net sales by store
+format" chart, **CLICK** the branch name at the top of the Git folder to show the one-file diff, deploy, and refresh
+the dashboard. **SAY** "Your dashboard change is a diff a reviewer can read, and the same file goes to prod."
 
 **IF** the orchestrator is slow: play the backup recording and let attendees' runs finish in the background.
 
@@ -327,6 +352,8 @@ it. The right way is the path you just saw: files, pull request, checks, approva
 | Problem | What to do |
 |---|---|
 | Genie Code is slow or wrong | Uncomment and run the module's **Catch up** cell, then redeploy |
+| Genie Code says "action denied" | A safety guardrail on risky actions. Approve what's expected; it carries on |
+| `No dev copy of ... yet` | The attendee didn't deploy first. Deploy `dev`, then rerun the cell |
 | Deploy fails on the Genie space | The tables don't exist yet. It only joins in module 4, after the orchestrator runs |
 | `rule_checks()` says it couldn't run the checks | Rerun the cell once (the first run installs pytest) |
 | Serverless is slow | Keep talking: each slow step above has filler ideas. Use the backup recording for module 4 |

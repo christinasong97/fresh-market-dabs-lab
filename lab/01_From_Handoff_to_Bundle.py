@@ -181,7 +181,8 @@ job_file = show_imported_job()
 # MAGIC %md
 # MAGIC ## 1.5 · Deploy your copy
 # MAGIC
-# MAGIC 1. Open **`databricks.yml`** in your Git folder. The **Deployments** panel (rocket icon) opens on the side.
+# MAGIC 1. In your **Git folder in Databricks** (Workspace in the left sidebar → `fresh-market-dabs-lab`), open
+# MAGIC    **`databricks.yml`**. The **Deployments** panel (rocket icon) opens on the side.
 # MAGIC 2. Choose target **`dev`**, click **Validate**, then **Deploy**.
 # MAGIC
 # MAGIC Validation passes: the YAML is valid. That doesn't mean it follows the team's rules.

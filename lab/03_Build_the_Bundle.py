@@ -124,28 +124,51 @@ show_file("resources/jobs/store_ops/orchestrator.job.yml")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 3.3 · The dashboard was already code
+# MAGIC ## 3.3 · The dashboard you're building toward
 # MAGIC
-# MAGIC **Why it matters:** a dashboard has the same problem as the job in module 1. If its queries say
-# MAGIC `fresh_market_lab_int.store_ops.gold_daily_store_sales`, it only ever shows INT data, and someone has to edit every
-# MAGIC query to move it to prod.
+# MAGIC Everything in this module feeds one screen: the **Store Performance** dashboard that district managers open each
+# MAGIC morning. It's already in your bundle (it came with the starter repo), and it looks like this:
 # MAGIC
-# MAGIC In a bundle, a dashboard is two files:
+# MAGIC ```
+# MAGIC  Store Performance
+# MAGIC  ┌───────────────────┬────────────────────┬──────────────────────────────┐
+# MAGIC  │ Net Sales         │ POS Line Items     │ Stores Flagged for Review    │
+# MAGIC  ├───────────────────┴──────────┬─────────┴──────────────────────────────┤
+# MAGIC  │ Weekly Net Sales by State    │ Net Sales by Department                │
+# MAGIC  │ (line chart)                 │ (bar chart)                            │
+# MAGIC  ├──────────────────────────────┴────────────────────────────────────────┤
+# MAGIC  │ Store Review List (worst attainment first)                            │
+# MAGIC  └───────────────────────────────────────────────────────────────────────┘
+# MAGIC ```
+# MAGIC
+# MAGIC | Part of the dashboard | Reads this table | Built by |
+# MAGIC |---|---|---|
+# MAGIC | Net Sales, POS Line Items, Weekly Net Sales by State | `gold_daily_store_sales` | Your pipeline (3.1) |
+# MAGIC | Net Sales by Department | `gold_department_sales` | Your pipeline (3.1) |
+# MAGIC | Stores Flagged for Review, Store Review List | `gold_store_alerts` | Your KPI job (module 2) |
+# MAGIC
+# MAGIC None of these tables exist yet, so the dashboard has nothing to show. In module 4 the orchestrator builds them,
+# MAGIC and you open the dashboard with your own data.
+# MAGIC
+# MAGIC **How it's stored in the bundle.** A dashboard is two files:
 # MAGIC
 # MAGIC | File | What it holds |
 # MAGIC |---|---|
 # MAGIC | `src/store_ops/dashboards/store_performance.lvdash.json` | The dashboard itself: pages, charts, queries |
 # MAGIC | `resources/dashboards/store_ops/so_store_performance.dashboard.yml` | Where it deploys and which data it reads |
 # MAGIC
-# MAGIC The queries use bare table names (`FROM gold_daily_store_sales`). Two lines in the YAML fill in the rest:
+# MAGIC Run the cell to see the YAML file. Look for these two lines:
 # MAGIC
-# MAGIC | Line | What it means |
-# MAGIC |---|---|
-# MAGIC | `dataset_catalog: ${var.catalog}` | Read from this target's catalog |
-# MAGIC | `dataset_schema: ${resources.schemas.so_store_ops.name}` | ...and this target's schema |
+# MAGIC ```
+# MAGIC dataset_catalog: ${var.catalog}                          ← read from this target's catalog
+# MAGIC dataset_schema: ${resources.schemas.so_store_ops.name}   ← ...and this target's schema
+# MAGIC ```
 # MAGIC
-# MAGIC Same dashboard file: your data in dev, production data in prod. It deploys with the pipeline that feeds it, so
-# MAGIC the charts and the tables they read always move to production together.
+# MAGIC **Why it matters:** a dashboard has the same problem as the job in module 1. If its queries said
+# MAGIC `fresh_market_lab_int.store_ops.gold_daily_store_sales`, it would only ever show INT data, and someone would have
+# MAGIC to edit every query to move it to prod. Instead the queries use bare table names (`FROM gold_daily_store_sales`),
+# MAGIC and these two lines fill in the rest. Same dashboard file: your data in dev, production data in prod. And it
+# MAGIC deploys with the pipeline that feeds it, so the charts and their tables always reach production together.
 
 # COMMAND ----------
 

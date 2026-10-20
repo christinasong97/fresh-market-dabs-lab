@@ -29,10 +29,18 @@
 # MAGIC %md
 # MAGIC ## 4.1 · Deploy, then run the orchestrator
 # MAGIC
-# MAGIC Deployments panel: target **`dev`** → **Deploy**. Then run the cell. It runs the pipeline and the KPI job in
-# MAGIC order and takes about 3 to 5 minutes. Open the run link to watch it.
+# MAGIC **Step 1 · Deploy first.** The cell below runs your *deployed* copy of the orchestrator, so deploy before you run
+# MAGIC it. Even if you deployed at the end of module 3, deploying again is quick and makes sure your dev copy matches
+# MAGIC your files.
+# MAGIC 1. In your Git folder in Databricks, open **`databricks.yml`**. The **Deployments** panel (rocket icon) opens.
+# MAGIC 2. Choose target **`dev`** and click **Deploy**. Wait until the panel says the deployment finished.
+# MAGIC
+# MAGIC **Step 2 · Run the cell.** It runs the pipeline, then the KPI job, and waits for both. It takes about 3 to 5
+# MAGIC minutes. Click the run link it prints to watch it.
 # MAGIC
 # MAGIC ✅ You should see `so_orchestrator: SUCCESS`, with `refresh_sales` and `publish_store_kpis` both succeeding.
+# MAGIC
+# MAGIC If you see *"No dev copy of 'so_orchestrator' yet"*, Step 1 didn't finish. Deploy again, then rerun the cell.
 # MAGIC
 # MAGIC **Why it matters:** this is the full morning run, the same one prod will do at 6am: first the pipeline turns the
 # MAGIC register files into clean tables, then the KPI job flags stores that are behind. One click runs everything in
@@ -78,8 +86,12 @@ display(spark.sql(f"SELECT * FROM `{CATALOG}`.`{schema}`.gold_store_alerts ORDER
 # MAGIC ## 4.3 · Add an agent to your bundle: the Genie space
 # MAGIC
 # MAGIC A Genie space is an agent that answers questions about specific tables, and it can't be created until those
-# MAGIC tables exist. Now that your orchestrator has built them, add **Store Ops Genie** to the bundle. Run the cell,
-# MAGIC look at the YAML, then **deploy again** (Deployments panel → `dev` → **Deploy**).
+# MAGIC tables exist. Now that your orchestrator has built them, add **Store Ops Genie** to the bundle. Two steps:
+# MAGIC
+# MAGIC 1. **Run the cell.** It adds the Genie space's YAML file to your Git folder and shows it. This only adds the
+# MAGIC    file; the Genie space doesn't exist yet.
+# MAGIC 2. **Deploy again:** Deployments panel → target **`dev`** → **Deploy**. This is what creates the Genie space.
+# MAGIC    Wait until the deployment finishes, then go to 4.4.
 # MAGIC
 # MAGIC **Why it matters:** district managers don't write SQL. A Genie space lets them ask "Which stores are behind
 # MAGIC this week?" in plain English. Because it's in the bundle, its instructions and example questions are code:
@@ -98,7 +110,11 @@ show_file("resources/genie_spaces/store_ops/so_store_ops_genie.genie_space.yml")
 # MAGIC %md
 # MAGIC ## 4.4 · Open your dashboard and ask your Genie space
 # MAGIC
-# MAGIC ✅ You should see links to both, and Genie should list about six underperforming stores.
+# MAGIC The dashboard is the one from module 3 (3.3), now showing your data. Open both links, then run the next cell to
+# MAGIC ask Genie a question from the notebook.
+# MAGIC
+# MAGIC ✅ You should see links to both, and Genie should list about six underperforming stores. No Genie space link?
+# MAGIC You haven't deployed since 4.3: deploy `dev` again, then rerun the cell.
 # MAGIC
 # MAGIC **Why it matters:** this is what Store Ops actually uses. The dashboard and the Genie space read the tables your
 # MAGIC pipeline and KPI job just built, and they all came from one deploy of one bundle.
@@ -152,10 +168,21 @@ for name in ("dev", "prod"):
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Optional · Change something and redeploy
+# MAGIC ## Optional · Change the dashboard and redeploy
 # MAGIC
-# MAGIC **Ask Genie Code** to add a chart to `src/store_ops/dashboards/store_performance.lvdash.json` (for example, "add a
-# MAGIC bar chart of net sales by store format"), deploy `dev` again, and refresh your dashboard. That one-file diff is
-# MAGIC exactly what you'd put in a pull request.
+# MAGIC In 3.3 you saw that the dashboard is a file in your bundle, `src/store_ops/dashboards/store_performance.lvdash.json`.
+# MAGIC Now that it shows real data, change it the way you'd change any code:
+# MAGIC
+# MAGIC 1. **Ask Genie Code:**
+# MAGIC    ```
+# MAGIC    Add a bar chart of net sales by store_format to src/store_ops/dashboards/store_performance.lvdash.json.
+# MAGIC    ```
+# MAGIC 2. **See the change:** click the branch name at the top of your Git folder in Databricks. The Git dialog lists the
+# MAGIC    changed file; click it to see the diff.
+# MAGIC 3. **Deploy:** Deployments panel → target **`dev`** → **Deploy**.
+# MAGIC 4. **Refresh your dashboard** (the link in 4.4). ✅ You should see the new chart.
+# MAGIC
+# MAGIC **Why it matters:** that one-file diff is exactly what you'd put in a pull request. A reviewer sees the change, the
+# MAGIC checks run, and the same file goes to prod.
 # MAGIC
 # MAGIC **Next:** open **`05_Pull_Request_and_Checks`**.

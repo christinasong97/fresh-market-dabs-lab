@@ -10,11 +10,8 @@
 # MAGIC test your own copy, and see how it gets to production through a pull request, automated checks, and an
 # MAGIC approval. Everything happens here in the workspace, with Genie Code. No terminal, no IDE.
 # MAGIC
-# MAGIC **Before you start:** you should be reading this from **your own Git folder**. If you're not, create it
-# MAGIC first: **Workspace → Create → Git folder**, paste `https://github.com/christinasong97/fresh-market-dabs-lab`,
-# MAGIC and click **Create**. It opens on the `lab/start` branch, which is all you need for the whole lab.
-# MAGIC
-# MAGIC **Then run this notebook top to bottom.** It explains bundles, sets up the lab environment, and checks it.
+# MAGIC You should be reading this from **your own Git folder in Databricks** (the repo's README explains how to
+# MAGIC create it). **Run this notebook top to bottom.** It explains bundles, sets up the lab environment, and checks it.
 # MAGIC
 # MAGIC | Module | What you'll do | Time |
 # MAGIC |---|---|---|
@@ -104,6 +101,7 @@
 # MAGIC | **Variable** | A value that changes per target, like `${var.catalog}`, so nothing is hard-coded |
 # MAGIC | **Development mode** | The `dev` target: your own copy, names prefixed `[dev <you>]`, schedules paused |
 # MAGIC | **Service principal** | A non-human identity. Shared targets deploy and run as it, never as a person |
+# MAGIC | **Git folder** | The copy of the GitHub repo inside your Databricks workspace. You open, edit, and deploy files here |
 # MAGIC | **Deployments panel** | The rocket icon next to `databricks.yml`: Validate and Deploy from the UI |
 
 # COMMAND ----------

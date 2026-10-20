@@ -2,15 +2,34 @@
 
 Declarative Automation Bundles (DABs) were formerly called Databricks Asset Bundles; same feature, new name.
 
-A reference bundle for the DevOps team's repository layout, plus a 90-minute hands-on lab. You take a job
-built by hand in the workspace, bring it into a bundle, test your own copy, and see it promoted to
-production through a pull request, automated checks, and an approval gate. All of it happens in the
-Databricks workspace UI with Genie Code.
+A 90-minute hands-on lab, plus a reference bundle for a DevOps team's repository layout. You take a job built by
+hand in the workspace, bring it into a bundle, test your own copy, and see it promoted to production through a pull
+request, automated checks, and an approval gate. All of it happens in the Databricks workspace with Genie Code.
 
-- **Attendees start here:** create a Git folder from this repo on `lab/start`, then open [`00_START_HERE`](00_START_HERE.py) in it and run it top to bottom
-- **Lab notebooks:** [`lab/`](lab), one per module (`01_From_Handoff_to_Bundle` … `06_Production_Is_Locked`)
-- **Instructor talk track:** [devops/instructor/TALK_TRACK.md](devops/instructor/TALK_TRACK.md)
-- **Delivering on Vocareum:** [devops/vocareum/README.md](devops/vocareum/README.md)
+## Before you start (attendees)
+
+You do everything in your **Databricks workspace**. You never need to open or change this GitHub repo.
+
+1. **Sign in to your Databricks workspace.** For this lab, that's
+   [Databricks Free Edition](https://www.databricks.com/learn/free-edition): sign up with your email, Google, or
+   Microsoft account.
+2. **Create your Git folder in Databricks.** A Git folder is a copy of this repo inside your workspace.
+   - In the left sidebar, click **Workspace**, then **Create → Git folder**.
+   - Paste `https://github.com/christinasong97/fresh-market-dabs-lab` and click **Create**. No GitHub account needed.
+   - It opens on the `lab/start` branch, which is all you need for the whole lab.
+3. **Open `00_START_HERE` in your Git folder**, set compute to **Serverless**, and click **Run all**. It explains
+   bundles, sets up the lab environment (about 5 minutes), and checks it. Every check should show ✅.
+4. **Then follow the notebooks in the `lab` folder**, in order: `01_From_Handoff_to_Bundle` through
+   `06_Production_Is_Locked`. Each one has numbered steps, the Genie Code prompts to paste, and a "✅ you should see"
+   after each step.
+
+**Instructors:** the talk track is [devops/instructor/TALK_TRACK.md](devops/instructor/TALK_TRACK.md), the pre-work
+email is [devops/instructor/PRE_WORK_EMAIL.md](devops/instructor/PRE_WORK_EMAIL.md), and
+`devops/instructor/reset_demo` resets a demo workspace between rehearsals.
+
+---
+
+The rest of this README is reference: what's in the bundle and how it's built. You don't need it for the lab.
 
 ## What's in the bundle
 
@@ -22,7 +41,7 @@ Databricks workspace UI with Genie Code.
 | Job | `so_orchestrator` | Daily DAG: refresh sales → publish KPIs |
 | Dashboard | `so_store_performance` | Store performance overview |
 | Genie space | `so_store_ops_genie` | "Store Ops Genie" — ask questions about store sales |
-| Job | `admin_rule_checks` | The same rule checks CI runs, runnable from the workspace |
+| Job | `admin_rule_checks` | The same rule checks CI runs, runnable as a job (the lab runs them in the notebook) |
 
 ## Targets
 
@@ -73,17 +92,24 @@ lab/                               # Module notebooks, shared helpers, and solut
 | `main` / `develop` | Complete solution; the instructor's pull request demo merges here and CI promotes it |
 | `feature/weekly-department-report` | The instructor's example pull request (with a planted rule violation) |
 
-## Try the full flow yourself
+## Quick setup without the lab (for your own workspace)
 
-Fork the repo, then:
-1. Set `cicd_service_principal` and `warehouse_name` in `resources/variables/common.vars.yml`. No host is pinned:
-   the workspace UI deploys to the workspace you're in, and CI uses `DATABRICKS_HOST`.
-2. Open `devops/lab_setup/00_lab_setup` from your Git folder and click **Run all** (as a workspace admin). It creates
-   the catalogs, landing data, SQL warehouse, legacy job, and Genie Code instructions.
-3. Create GitHub environments `ci`, `int`, `cert`, `prod` with secrets `DATABRICKS_CLIENT_ID` and
-   `DATABRICKS_CLIENT_SECRET`, plus a repository variable `DATABRICKS_HOST`. Add a required reviewer to `prod`.
-   Prefer [workload identity federation](https://docs.databricks.com/dev-tools/auth/provider-github) over secrets
-   when you have account admin access.
+A short summary for setting up this bundle and its CI/CD in a workspace of your own, without the lab notebooks.
+**If you're doing the lab, skip this:** `00_START_HERE` does steps 2 and 3 for you, and the lab notebooks walk
+through everything else.
+
+1. **Fork the repo** and create a Git folder in Databricks from your fork.
+2. **Set two variables** in `resources/variables/common.vars.yml`: `cicd_service_principal` (the application ID of
+   the service principal that deploys int, cert, and prod) and `warehouse_name` (an existing SQL warehouse). No host
+   is pinned: the workspace UI deploys to the workspace you're in, and CI uses `DATABRICKS_HOST`.
+3. **Run `devops/lab_setup/00_lab_setup`** from your Git folder as a workspace admin. It creates the catalogs, landing
+   data, SQL warehouse, legacy job, and Genie Code instructions.
+4. **Connect GitHub Actions:** create GitHub environments `ci`, `int`, `cert`, `prod` with secrets
+   `DATABRICKS_CLIENT_ID` and `DATABRICKS_CLIENT_SECRET`, plus repository variables `DATABRICKS_HOST` and
+   `DATABRICKS_CI_ENABLED=true`. Add a required reviewer to `prod`. Prefer
+   [workload identity federation](https://docs.databricks.com/dev-tools/auth/provider-github) over secrets when you
+   have account admin access.
+5. **Deploy `dev`** from the Deployments panel to test, and merge to `develop` / `main` to promote.
 
 ## Run the checks locally
 
