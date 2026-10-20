@@ -263,14 +263,20 @@ is the list Store Ops follows up on."
 **RUN** 4.3. **CLICK** the dashboard link. **SAY** "This is the dashboard from 3.3, now with our data. It's what Store
 Ops actually opens each morning, and it came from the same deploy as the pipeline and the job."
 
-**RUN** 4.4 (`rule_checks()`). **CHECK** all ✅. **RUN** 4.5 and compare `dev` with `prod`.
+**4.4 · Change the dashboard (about 4 min).** **RUN** the Genie Code prompt to add a "net sales by store format" bar
+chart. **CLICK** the branch name at the top of the Git folder to show the one-file diff. **CLICK** Deploy, then refresh
+the dashboard. **CHECK** the new chart. **SAY** "You changed a dashboard the way you change code: a diff a reviewer can
+read, and the same file goes to prod."
+
+**RUN** 4.5 (`rule_checks()`). **CHECK** all ✅. **IF** *No hard-coded catalog names* fails: the new chart's query names
+a catalog; have Genie Code switch it to a bare table name. **RUN** 4.6 and compare `dev` with `prod`.
 
 **SAY** "Same resources. Different catalog, different identity, locked permissions. Nobody edits a file to promote."
 
-**SAY** "That's the required part of module 4. If you're short on time, go on to module 5. The two optional sections
-are next if you have time."
+**SAY** "That's the required part of module 4. If you're short on time, go on to module 5. The optional Genie Agent
+section is next if you have time."
 
-### Optional A · Add a Genie Agent (about 5 min)
+### Optional · Add a Genie Agent (about 5 min)
 
 Attendees can watch or follow along. Nothing later depends on it. The point: **there are several ways to add a
 resource to a bundle**, and they all end in the same reviewed file.
@@ -298,12 +304,6 @@ identifiers using variables, the instructions.
 **RUN** the link cell and `ask_genie(...)`. **CHECK** about six underperforming stores.
 
 **IF** there's no Genie link: you didn't deploy after adding the file. Deploy, then rerun the cell.
-
-### Optional B · Change the dashboard (if there's time)
-
-Ask Genie Code for a "net sales by store format" chart, **CLICK** the branch name at the top of the Git folder to
-show the one-file diff, deploy, and refresh the dashboard. **SAY** "Your dashboard change is a diff a reviewer can
-read, and the same file goes to prod."
 
 ## Module 5 · Ship it: from dev to production (25 min)
 

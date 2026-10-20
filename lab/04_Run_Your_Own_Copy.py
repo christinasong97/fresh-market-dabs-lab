@@ -104,9 +104,30 @@ else:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 4.4 · Final check
+# MAGIC ## 4.4 · Change the dashboard and redeploy
 # MAGIC
-# MAGIC Everything should pass now.
+# MAGIC In 3.3 you saw that the dashboard is a file in your bundle, `src/store_ops/dashboards/store_performance.lvdash.json`.
+# MAGIC Now that it shows real data, change it the way you'd change any code:
+# MAGIC
+# MAGIC 1. **Ask Genie Code:**
+# MAGIC    ```
+# MAGIC    Add a bar chart of net sales by store_format to src/store_ops/dashboards/store_performance.lvdash.json.
+# MAGIC    ```
+# MAGIC 2. **See the change:** click the branch name at the top of your Git folder in Databricks. The Git dialog lists the
+# MAGIC    changed file; click it to see the diff.
+# MAGIC 3. **Deploy:** Deployments panel → target **`dev`** → **Deploy**.
+# MAGIC 4. **Refresh your dashboard** (the link in 4.3). ✅ You should see the new chart.
+# MAGIC
+# MAGIC **Why it matters:** that one-file diff is exactly what you'd put in a pull request. A reviewer sees the change, the
+# MAGIC checks run, and the same file goes to prod.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 4.5 · Final check
+# MAGIC
+# MAGIC Everything should pass now. If *No hard-coded catalog names* fails, your new chart's query names a catalog:
+# MAGIC ask Genie Code to use a bare table name instead, like the other charts, then redeploy.
 # MAGIC
 # MAGIC **Why it matters:** these are the same checks the pull request runs in module 5. If they pass here, you already
 # MAGIC know your change will clear CI, before anyone else has to look at it.
@@ -118,7 +139,7 @@ rule_checks()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 4.5 · Same files, different targets
+# MAGIC ## 4.6 · Same files, different targets
 # MAGIC
 # MAGIC Compare `dev` with `prod`: same resources, but a different catalog, a different identity, and locked
 # MAGIC permissions. Nobody edits a file to promote; the target does the work.
@@ -137,13 +158,13 @@ for name in ("dev", "prod"):
 # MAGIC %md
 # MAGIC ## Done with the required part of module 4
 # MAGIC
-# MAGIC If you're short on time, go straight to **`05_Ship_It`**. The two optional sections below add a
-# MAGIC Genie Agent to your bundle and change the dashboard; nothing later in the lab depends on them.
+# MAGIC If you're short on time, go straight to **`05_Ship_It`**. The optional section below adds a Genie Agent
+# MAGIC to your bundle; nothing later in the lab depends on it.
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Optional A · Add a Genie Agent to your bundle
+# MAGIC ## Optional · Add a Genie Agent to your bundle
 # MAGIC
 # MAGIC *Optional: do it if you have time. Nothing later in the lab depends on it.* It shows three ways to add something
 # MAGIC to a bundle: build it in the UI, ask Genie Code to write it, or add a finished file with code.
@@ -247,21 +268,4 @@ ask_genie("Which stores are underperforming right now?")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Optional B · Change the dashboard and redeploy
-# MAGIC
-# MAGIC In 3.3 you saw that the dashboard is a file in your bundle, `src/store_ops/dashboards/store_performance.lvdash.json`.
-# MAGIC Now that it shows real data, change it the way you'd change any code:
-# MAGIC
-# MAGIC 1. **Ask Genie Code:**
-# MAGIC    ```
-# MAGIC    Add a bar chart of net sales by store_format to src/store_ops/dashboards/store_performance.lvdash.json.
-# MAGIC    ```
-# MAGIC 2. **See the change:** click the branch name at the top of your Git folder in Databricks. The Git dialog lists the
-# MAGIC    changed file; click it to see the diff.
-# MAGIC 3. **Deploy:** Deployments panel → target **`dev`** → **Deploy**.
-# MAGIC 4. **Refresh your dashboard** (the link in 4.3). ✅ You should see the new chart.
-# MAGIC
-# MAGIC **Why it matters:** that one-file diff is exactly what you'd put in a pull request. A reviewer sees the change, the
-# MAGIC checks run, and the same file goes to prod.
-# MAGIC
 # MAGIC **Next:** open **`05_Ship_It`**.
