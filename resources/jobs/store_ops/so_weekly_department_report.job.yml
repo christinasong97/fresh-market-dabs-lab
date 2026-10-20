@@ -9,7 +9,7 @@ resources:
         cost_center: ${var.cost_center}
       email_notifications:
         on_failure:
-          - jane.doe@example.com
+          - ${var.notification_email}
       schedule:
         quartz_cron_expression: "0 0 7 ? * MON"
         timezone_id: America/Detroit
