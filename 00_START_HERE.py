@@ -29,6 +29,42 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ## The scenario: Fresh Market
+# MAGIC
+# MAGIC **Fresh Market** is a grocery chain (made up for this lab) with **40 stores** across Michigan, Ohio, Indiana,
+# MAGIC Illinois, Kentucky, and Wisconsin. Every store's registers (the **point of sale**, or POS) send the day's sales to
+# MAGIC a landing zone as files.
+# MAGIC
+# MAGIC **The business need:** every morning, the **Store Operations** team needs to know which stores are behind their
+# MAGIC sales target, so district managers can follow up the same day, before a slow week turns into a slow month.
+# MAGIC
+# MAGIC **How it works today:**
+# MAGIC - A developer builds the jobs by hand in the INT workspace: `Job_00`, `Job_01` (load sales), `Job_02` (flag
+# MAGIC   stores). The run order lives in the numbers.
+# MAGIC - To go to production, the developer hands the job definition to the **DevOps team**, who rebuild it for CERT and
+# MAGIC   PROD, re-pointing catalogs and permissions by hand.
+# MAGIC - Every handoff takes time, and what runs in production can drift from what was tested.
+# MAGIC
+# MAGIC **Your role today:** you're a developer on the Store Ops data team. DevOps has adopted bundles and written the
+# MAGIC team's rules. Your job is to move the store alerts onto a bundle yourself, with no handoff, and get them to
+# MAGIC production through a pull request.
+# MAGIC
+# MAGIC **By the end, your bundle has:**
+# MAGIC
+# MAGIC | Piece | What it does for Store Ops |
+# MAGIC |---|---|
+# MAGIC | A sales pipeline | Turns the raw register files into clean, trusted tables, dropping bad rows |
+# MAGIC | A KPI job | Flags every store under 85% of its sales target |
+# MAGIC | An orchestrator | Runs the pipeline, then the KPI job, every morning in the right order |
+# MAGIC | A dashboard | Store performance at a glance for district managers |
+# MAGIC | A Genie space | Lets anyone ask "Which stores are underperforming?" in plain English |
+# MAGIC
+# MAGIC **The data** is synthetic and set up for you in Step 1: about 60 days of register sales (with some bad rows on
+# MAGIC purpose), the 40 stores, about 150 products in 8 departments, and each store's daily sales target.
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## What is a Declarative Automation Bundle (DAB)?
 # MAGIC
 # MAGIC > **Same thing, new name.** Declarative Automation Bundles (DABs) were formerly called **Databricks Asset

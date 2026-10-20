@@ -23,8 +23,18 @@
 # MAGIC %md
 # MAGIC ## 1.1 · Look at the hand-built job
 # MAGIC
-# MAGIC `Job_02_PL_Store_KPI_Alerts` flags stores that are behind their sales target. It works, but look at how it's
-# MAGIC built. Run the cell and spot the problems.
+# MAGIC **About this job.** `Job_02_PL_Store_KPI_Alerts` is the Store Operations team's daily alert. A developer built it
+# MAGIC by hand in INT so district managers know each morning which stores are falling behind.
+# MAGIC
+# MAGIC | | |
+# MAGIC |---|---|
+# MAGIC | **What kind of job** | A scheduled job with one notebook task, 6:30 every morning, after `Job_01` loads the sales |
+# MAGIC | **What it reads** | The last 15 days of register sales, the store list, and each store's daily sales target |
+# MAGIC | **What it does** | Compares each store's sales with its target and marks any store under 85% `UNDERPERFORMING` |
+# MAGIC | **What it writes** | A `store_alerts` table that Store Ops uses to follow up with those stores |
+# MAGIC | **Who hears about failures** | Jane, the developer who built it, by email |
+# MAGIC
+# MAGIC It works, but look at how it's built. Run the cell and spot the problems.
 
 # COMMAND ----------
 
