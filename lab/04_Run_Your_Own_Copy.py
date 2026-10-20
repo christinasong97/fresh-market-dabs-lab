@@ -143,11 +143,10 @@ for name in ("dev", "prod"):
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Optional A · Add a Genie Agent to your bundle (instructor demo)
+# MAGIC ## Optional A · Add a Genie Agent to your bundle
 # MAGIC
-# MAGIC *Optional. Your instructor walks through this on screen; follow along if you have time. Nothing later in the lab
-# MAGIC depends on it.* It shows three ways to add something to a bundle: build it in the UI, ask Genie Code to write it,
-# MAGIC or add a finished file with code.
+# MAGIC *Optional: do it if you have time. Nothing later in the lab depends on it.* It shows three ways to add something
+# MAGIC to a bundle: build it in the UI, ask Genie Code to write it, or add a finished file with code.
 # MAGIC
 # MAGIC A Genie space is an agent that answers questions about specific tables, and it can't be created until those
 # MAGIC tables exist. Now that your orchestrator has built them, add **Store Ops Genie** to the bundle.

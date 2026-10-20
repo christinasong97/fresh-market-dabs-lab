@@ -266,10 +266,10 @@ Ops actually opens each morning, and it came from the same deploy as the pipelin
 
 **SAY** "Same resources. Different catalog, different identity, locked permissions. Nobody edits a file to promote."
 
-**SAY** "That's the required part of module 4. If you're short on time, go on to module 5. I'll show the two optional
-sections on my screen."
+**SAY** "That's the required part of module 4. If you're short on time, go on to module 5. The two optional sections
+are next if you have time."
 
-### Optional A · Add a Genie Agent (instructor demo, about 5 min)
+### Optional A · Add a Genie Agent (about 5 min)
 
 Attendees can watch or follow along. Nothing later depends on it. The point: **there are several ways to add a
 resource to a bundle**, and they all end in the same reviewed file.
