@@ -6,12 +6,12 @@
 # MAGIC
 # MAGIC ![The CI/CD cycle, from Develop to Deploy to Production](./images/cicd_cycle.png)
 # MAGIC
-# MAGIC | Part of the cycle | In this lab |
-# MAGIC |---|---|
-# MAGIC | **Develop, Build, Test** | Modules 1 to 4: you built the bundle, ran the checks, and deployed your own `dev` copy |
-# MAGIC | **Version Control** | 5.2: the change goes into Git as a pull request, and CI runs the checks |
-# MAGIC | **Deploy to Stage** | 5.4: CI deploys to **cert** and runs the orchestrator as a test |
-# MAGIC | **Deploy to Production** | 5.4: after approval, CI deploys the same files to **prod** |
+# MAGIC | | Part of the cycle | In this lab |
+# MAGIC |---|---|---|
+# MAGIC | **CI** | **Develop, Build, Test** | Modules 1 to 4: you built the bundle, ran the checks, and deployed your `dev` copy |
+# MAGIC | **CI** | **Version Control** | 5.2: the change goes into Git as a pull request, and the CI checks run on it |
+# MAGIC | **CD** | **Deploy to Stage** | 5.4: the CD pipeline deploys to **cert** and runs the orchestrator as a test |
+# MAGIC | **CD** | **Deploy to Production** | 5.4: after approval, the CD pipeline deploys the same files to **prod** |
 # MAGIC
 # MAGIC The right half is the part DevOps used to do by hand. Every step in it is a **policy written as code**:
 # MAGIC
@@ -45,8 +45,8 @@
 # MAGIC | `Recommendation: permissions ... should include` you | On purpose: only the service principal can manage prod |
 # MAGIC
 # MAGIC **Why it matters:** nobody deploys production from their own login, not even an admin by accident. A **service
-# MAGIC principal** is a non-human identity that only CI uses. Production doesn't depend on who built it, and every
-# MAGIC prod deploy goes through the same path.
+# MAGIC principal** is a non-human identity that only the CI/CD pipeline uses. Production doesn't depend on who built
+# MAGIC it, and every prod deploy goes through the same path.
 # MAGIC
 # MAGIC Run the cell to see where that policy lives: four lines in `databricks.yml`, owned by DevOps.
 
@@ -69,7 +69,7 @@ print(yaml.safe_dump({"prod": {k: prod[k] for k in ("mode", "workspace", "run_as
 # MAGIC run_as:
 # MAGIC   service_principal_name: ...            ← prod jobs run as the service principal, never as a person
 # MAGIC permissions:
-# MAGIC   - level: CAN_MANAGE  (service principal)   ← only CI can change prod
+# MAGIC   - level: CAN_MANAGE  (service principal)   ← only the CI/CD pipeline can change prod
 # MAGIC   - level: CAN_VIEW    (users)               ← everyone else can look
 # MAGIC ```
 # MAGIC
@@ -175,13 +175,13 @@ displayHTML(
 # MAGIC the path you just saw: change the files, open a pull request, pass the checks, get approval.
 # MAGIC
 # MAGIC The cell lists production jobs in this workspace and who can manage them. In your workspace there are none:
-# MAGIC prod only exists where CI deploys it.
+# MAGIC prod only exists where the CD pipeline deploys it.
 
 # COMMAND ----------
 
 prod_jobs = [j for j in w.jobs.list() if j.settings and j.settings.name.startswith(f"{BUNDLE}_prod_")]
 if not prod_jobs:
-    print("No production jobs in this workspace: prod only exists where CI deploys it.")
+    print("No production jobs in this workspace: prod only exists where the CD pipeline deploys it.")
 for job in prod_jobs:
     acl = w.permissions.get("jobs", str(job.job_id)).access_control_list or []
     print(job.settings.name)
@@ -199,7 +199,7 @@ for job in prod_jobs:
 # MAGIC
 # MAGIC | Guardrail | Where it lives | Who owns it |
 # MAGIC |---|---|---|
-# MAGIC | Only CI deploys to shared targets | `databricks.yml`: `run_as`, `root_path`, `permissions` | DevOps |
+# MAGIC | Only the CI/CD pipeline deploys to shared targets | `databricks.yml`: `run_as`, `root_path`, `permissions` | DevOps |
 # MAGIC | Team rules, checked on every change | `tests/bundle/` (run by `rule_checks()` and by CI) | DevOps |
 # MAGIC | Genie Code follows the team's rules | `.assistant_workspace_instructions.md` | DevOps |
 # MAGIC | Your own safe copy | The `dev` target (development mode) | DevOps sets it up; you use it |
