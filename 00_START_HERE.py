@@ -19,7 +19,7 @@
 # MAGIC | 1 · From handoff to bundle | Turn a hand-built job into code, deploy it, run the team's checks | 10 min |
 # MAGIC | 2 · The guardrails DevOps owns | Genie Code fixes the job using the team's rules | 10 min |
 # MAGIC | 3 · Build the bundle with Genie Code | Add a pipeline and an orchestrator job | 20 min |
-# MAGIC | 4 · Your own development target | Deploy and run your copy; open your dashboard and Genie space | 15 min |
+# MAGIC | 4 · Your own development target | Deploy and run your copy; open your dashboard (optional: a Genie Agent) | 15 min |
 # MAGIC | 5 · Pull request and checks | *Instructor:* PR → checks → approval → production | 20 min |
 # MAGIC | 6 · Production is locked | *Instructor:* why hand edits in production don't stick | 5 min |
 
@@ -54,7 +54,7 @@
 # MAGIC | A KPI job | Flags every store under 85% of its sales target |
 # MAGIC | An orchestrator | Runs the pipeline, then the KPI job, every morning in the right order |
 # MAGIC | A dashboard | Store performance at a glance for district managers |
-# MAGIC | A Genie space | Lets anyone ask "Which stores are underperforming?" in plain English |
+# MAGIC | A Genie Agent (optional) | Lets anyone ask "Which stores are underperforming?" in plain English |
 # MAGIC
 # MAGIC **The data** is synthetic and set up for you in Step 1: about 60 days of register sales (with some bad rows on
 # MAGIC purpose), the 40 stores, about 150 products in 8 departments, and each store's daily sales target.
@@ -193,7 +193,7 @@ print("Ready to go." if all(results) else "Something is missing. Re-run Step 1, 
 # MAGIC | `lab/01_From_Handoff_to_Bundle` | Turn a hand-built job into code, deploy it, run the team's checks |
 # MAGIC | `lab/02_Guardrails_with_Genie_Code` | Genie Code fixes the job using the DevOps team's rules |
 # MAGIC | `lab/03_Build_the_Bundle` | Add the sales pipeline and the orchestrator |
-# MAGIC | `lab/04_Run_Your_Own_Copy` | Run your copy; open your dashboard and Genie space |
+# MAGIC | `lab/04_Run_Your_Own_Copy` | Run your copy; open your dashboard (optional: a Genie Agent) |
 # MAGIC | `lab/05_Pull_Request_and_Checks` | How a change gets to production; catch a teammate's mistake |
 # MAGIC | `lab/06_Production_Is_Locked` | Why hand edits in production don't stick; wrap-up |
 # MAGIC

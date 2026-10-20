@@ -371,7 +371,7 @@ def ask_genie(question):
     """Ask your dev Genie space a question and print the SQL it wrote and its answer."""
     space = find_dev_genie_space()
     if space is None:
-        print("❌ No dev Genie space yet. Do Option A or B in 4.3, then deploy again.")
+        print("❌ No dev Genie space yet. Add it in module 4, Optional A, then deploy again.")
         return
     base = f"/api/2.0/genie/spaces/{space['id']}"
     started = w.api_client.do("POST", f"{base}/start-conversation", body={"content": question})

@@ -38,7 +38,7 @@ hand.** Each module adds one piece of that story.
 | 1 · From handoff to bundle | 10 | Everyone |
 | 2 · The guardrails DevOps owns | 10 | Everyone |
 | 3 · Build the bundle with Genie Code | 20 | Everyone |
-| 4 · Your own development target | 15 | Everyone |
+| 4 · Your own development target | 15 | Everyone (optional sections: you) |
 | 5 · Pull request and checks | 20 | You, then everyone |
 | 6 · Production is locked | 5 | You |
 
@@ -259,43 +259,50 @@ deployed copy, so always deploy first."
 **SAY** "Those are the silver rules at work: a register glitch never reaches a district manager's report. And this
 is the list Store Ops follows up on."
 
-**CLICK** 4.3. **SAY** "A Genie space can only be created once its tables exist, which is why it joins now."
+**RUN** 4.3. **CLICK** the dashboard link. **SAY** "This is the dashboard from 3.3, now with our data. It's what Store
+Ops actually opens each morning, and it came from the same deploy as the pipeline and the job."
 
-**Two options, pick one to show on screen** (Option A is the better demo if you have 5 minutes):
-- **Option A, the UI:** **CLICK** Genie → **New** → `fresh_market_lab_int` → your dev schema → the three gold tables →
+**RUN** 4.4 (`rule_checks()`). **CHECK** all ✅. **RUN** 4.5 and compare `dev` with `prod`.
+
+**SAY** "Same resources. Different catalog, different identity, locked permissions. Nobody edits a file to promote."
+
+**SAY** "That's the required part of module 4. If you're short on time, go on to module 5. I'll show the two optional
+sections on my screen."
+
+### Optional A · Add a Genie Agent (instructor demo, about 5 min)
+
+Attendees can watch or follow along. Nothing later depends on it. The point: **there are several ways to add a
+resource to a bundle**, and they all end in the same reviewed file.
+
+**SAY** "A Genie Agent lets district managers ask questions in plain English. It can only be created once its tables
+exist, which is why it comes after the orchestrator run."
+
+Show one or more of the three ways:
+- **Way 1, the UI:** **CLICK** Genie → **New** → `fresh_market_lab_int` → your dev schema → the three gold tables →
   name it `My Store Ops Genie` → Serverless Starter Warehouse → save. Ask it one question. **RUN**
   `import_genie_space("My Store Ops Genie")`.
   **SAY** "There's no Add existing for Genie spaces in the Deployments panel yet, so a cell exports it. Notice it
   swaps my schema's name for the bundle's variables, so the same file works in prod."
-- **Option B, the finished file:** **RUN** `add_genie_space()`. **SAY** "This one comes with instructions and example
-  SQL, written once and reviewed like code."
+- **Way 2, Genie Code:** **RUN** the Way 2 prompt in Genie Code, then **CLICK** Validate. **SAY** "Same idea as the
+  pipeline in module 3: Genie Code writes the bundle file, following the team's rules." **IF** it doesn't validate
+  after one fix, switch to Way 3.
+- **Way 3, the finished file (code):** **RUN** `add_genie_space()`. **SAY** "This is adding a resource with code. It
+  comes with instructions and example SQL, written once and reviewed like code."
 
 **RUN** the YAML cell and **CLICK** the annotated parts: the title per target, the warehouse lookup, the table
 identifiers using variables, the instructions.
 
-**SAY** "Its instructions and example questions are code, reviewed in the same pull request as the tables."
+**CLICK** Deploy again. **SAY** "Adding the file doesn't create anything. Deploying is what creates the Genie Agent."
 
-**CLICK** Deploy again. **SAY** "The cell only adds the file. Deploying is what creates the Genie space."
+**RUN** the link cell and `ask_genie(...)`. **CHECK** about six underperforming stores.
 
-**RUN** 4.4. **CLICK** the dashboard link. **SAY** "This is the dashboard from 3.3, now with our data." Then **CLICK**
-the Genie space link and **RUN** `ask_genie(...)`.
+**IF** there's no Genie link: you didn't deploy after adding the file. Deploy, then rerun the cell.
 
-**IF** there's no Genie space link: that attendee didn't deploy after 4.3. Deploy, then rerun the cell.
+### Optional B · Change the dashboard (if there's time)
 
-**CHECK** About six underperforming stores.
-
-**SAY** "District managers don't write SQL. This is what Store Ops actually uses, and it all came from one deploy of
-one bundle."
-
-**RUN** 4.5 (`rule_checks()`). **CHECK** all ✅. **RUN** 4.6 and compare `dev` with `prod`.
-
-**SAY** "Same resources. Different catalog, different identity, locked permissions. Nobody edits a file to promote."
-
-**Optional, if there's time:** the dashboard change at the end of module 4. Ask Genie Code for a "net sales by store
-format" chart, **CLICK** the branch name at the top of the Git folder to show the one-file diff, deploy, and refresh
-the dashboard. **SAY** "Your dashboard change is a diff a reviewer can read, and the same file goes to prod."
-
-**IF** the orchestrator is slow: play the backup recording and let attendees' runs finish in the background.
+Ask Genie Code for a "net sales by store format" chart, **CLICK** the branch name at the top of the Git folder to
+show the one-file diff, deploy, and refresh the dashboard. **SAY** "Your dashboard change is a diff a reviewer can
+read, and the same file goes to prod."
 
 ## Module 5 · Pull request and checks (20 min)
 

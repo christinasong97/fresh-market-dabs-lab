@@ -83,7 +83,71 @@ display(spark.sql(f"SELECT * FROM `{CATALOG}`.`{schema}`.gold_store_alerts ORDER
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 4.3 · Add an agent to your bundle: the Genie space
+# MAGIC ## 4.3 · Open your dashboard
+# MAGIC
+# MAGIC This is the dashboard from module 3 (3.3), now showing your data. Run the cell and open the link.
+# MAGIC
+# MAGIC ✅ You should see Net Sales, the weekly sales and department charts, and the Store Review List with the stores
+# MAGIC furthest behind target at the top.
+# MAGIC
+# MAGIC **Why it matters:** this is what Store Ops actually uses. The dashboard reads the tables your pipeline and KPI job
+# MAGIC just built, and they all came from one deploy of one bundle.
+
+# COMMAND ----------
+
+dash = find_dev_dashboard()
+if dash:
+    link(f"/dashboardsv3/{dash['id']}/published", f"📊 {dash['name']}")
+else:
+    print("No dev dashboard yet: deploy dev (Deployments panel → dev → Deploy), then rerun this cell.")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 4.4 · Final check
+# MAGIC
+# MAGIC Everything should pass now.
+# MAGIC
+# MAGIC **Why it matters:** these are the same checks the pull request runs in module 5. If they pass here, you already
+# MAGIC know your change will clear CI, before anyone else has to look at it.
+
+# COMMAND ----------
+
+rule_checks()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 4.5 · Same files, different targets
+# MAGIC
+# MAGIC Compare `dev` with `prod`: same resources, but a different catalog, a different identity, and locked
+# MAGIC permissions. Nobody edits a file to promote; the target does the work.
+
+# COMMAND ----------
+
+import yaml
+
+targets = yaml.safe_load(open(f"{REPO_ROOT}/databricks.yml"))["targets"]
+for name in ("dev", "prod"):
+    print(f"--- {name} ---")
+    print(yaml.safe_dump(targets[name], sort_keys=False))
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Done with the required part of module 4
+# MAGIC
+# MAGIC If you're short on time, go straight to **`05_Pull_Request_and_Checks`**. The two optional sections below add a
+# MAGIC Genie Agent to your bundle and change the dashboard; nothing later in the lab depends on them.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Optional A · Add a Genie Agent to your bundle (instructor demo)
+# MAGIC
+# MAGIC *Optional. Your instructor walks through this on screen; follow along if you have time. Nothing later in the lab
+# MAGIC depends on it.* It shows three ways to add something to a bundle: build it in the UI, ask Genie Code to write it,
+# MAGIC or add a finished file with code.
 # MAGIC
 # MAGIC A Genie space is an agent that answers questions about specific tables, and it can't be created until those
 # MAGIC tables exist. Now that your orchestrator has built them, add **Store Ops Genie** to the bundle.
@@ -92,9 +156,9 @@ display(spark.sql(f"SELECT * FROM `{CATALOG}`.`{schema}`.gold_store_alerts ORDER
 # MAGIC this week?" in plain English. Because it's in the bundle, its instructions and example questions are code:
 # MAGIC reviewed in the same pull request as the tables they describe, and promoted to prod with them.
 # MAGIC
-# MAGIC **Pick one of the two options.**
+# MAGIC **Pick one of the three ways to add it.**
 # MAGIC
-# MAGIC ### Option A · Build it in the UI, then bring it into your bundle
+# MAGIC ### Way 1 · Build it in the UI, then bring it into your bundle
 # MAGIC The Deployments panel's **Add existing** doesn't offer Genie spaces yet, so you build the space in the UI and a
 # MAGIC cell turns it into bundle YAML.
 # MAGIC 1. In the left sidebar, click **Genie**, then **New**.
@@ -103,15 +167,27 @@ display(spark.sql(f"SELECT * FROM `{CATALOG}`.`{schema}`.gold_store_alerts ORDER
 # MAGIC 3. Name the space **`My Store Ops Genie`** and choose the **Serverless Starter Warehouse**. Save it.
 # MAGIC 4. Optional: in its **Instructions**, add *"'Right now' means the last 14 days of sales_date."* Then ask it
 # MAGIC    *"Which stores are underperforming right now?"*
-# MAGIC 5. Run the Option A cell. It saves the space as a bundle file and swaps your schema's name for the bundle's
+# MAGIC 5. Run the Way 1 cell. It saves the space as a bundle file and swaps your schema's name for the bundle's
 # MAGIC    variables, so the same file works in every target.
 # MAGIC
-# MAGIC ### Option B · Add the finished file
-# MAGIC Run the Option B cell. It adds a ready-made Genie space file, with instructions and example SQL, to your bundle.
+# MAGIC ### Way 2 · Ask Genie Code to write it
+# MAGIC **Ask Genie Code** (agent mode):
+# MAGIC ```
+# MAGIC Add a Genie space to the bundle in resources/genie_spaces/store_ops/so_store_ops_genie.genie_space.yml, with
+# MAGIC resource key so_store_ops_genie, title "Store Ops Genie (${var.environment})", and warehouse_id
+# MAGIC ${var.warehouse_id}. Use the gold_daily_store_sales, gold_department_sales, and gold_store_alerts tables in
+# MAGIC ${var.catalog}.${resources.schemas.so_store_ops.name}. Define it inline under serialized_space (version 2), with
+# MAGIC two sample questions and a short instruction that explains target attainment.
+# MAGIC ```
+# MAGIC Then click **Validate** in the Deployments panel. If it doesn't validate after one fix, use Way 3.
 # MAGIC
-# MAGIC ### Then, either option: deploy again
+# MAGIC ### Way 3 · Add the finished file
+# MAGIC Run the Way 3 cell. It adds a ready-made Genie space file, with instructions and example SQL, to your bundle.
+# MAGIC
+# MAGIC ### Then, either way: deploy again
 # MAGIC The cell only adds a file; the Genie space doesn't exist yet. **Deploy:** Deployments panel → target **`dev`** →
-# MAGIC **Deploy**. That's what creates the Genie space. Wait until the deployment finishes, then go to 4.4.
+# MAGIC **Deploy**. That's what creates the Genie space. Wait until the deployment finishes, then run the cells at
+# MAGIC the end of this section.
 
 # COMMAND ----------
 
@@ -119,12 +195,12 @@ print(f"Your schema: {dev_schema()}")
 
 # COMMAND ----------
 
-# Option A only: you built "My Store Ops Genie" in the UI.
+# Way 1 only: you built "My Store Ops Genie" in the UI.
 import_genie_space("My Store Ops Genie")
 
 # COMMAND ----------
 
-# Option B only: add the finished file.
+# Way 3 only: add the finished file.
 add_genie_space()
 
 # COMMAND ----------
@@ -142,7 +218,7 @@ add_genie_space()
 # MAGIC                                                   ← your schema in dev, prod's schema in prod
 # MAGIC   instructions:
 # MAGIC     text_instructions: ...                        ← what Genie should know about the data
-# MAGIC     example_question_sqls: ...                    ← known-good SQL for common questions (Option B)
+# MAGIC     example_question_sqls: ...                    ← known-good SQL for common questions (Way 3)
 # MAGIC ```
 # MAGIC
 # MAGIC Change an instruction here, and the change goes through a pull request like any other code.
@@ -154,27 +230,16 @@ show_file(GENIE_FILE)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 4.4 · Open your dashboard and ask your Genie space
-# MAGIC
-# MAGIC The dashboard is the one from module 3 (3.3), now showing your data. Open both links, then run the next cell to
-# MAGIC ask Genie a question from the notebook.
-# MAGIC
-# MAGIC ✅ You should see links to both, and Genie should list about six underperforming stores. No Genie space link?
-# MAGIC You haven't deployed since 4.3: deploy `dev` again, then rerun the cell.
-# MAGIC
-# MAGIC **Why it matters:** this is what Store Ops actually uses. The dashboard and the Genie space read the tables your
-# MAGIC pipeline and KPI job just built, and they all came from one deploy of one bundle.
+# MAGIC **Open your Genie Agent and ask it a question.** ✅ You should see a link, and Genie should list about six
+# MAGIC underperforming stores. No link? You haven't deployed since adding the file: deploy `dev` again, then rerun.
 
 # COMMAND ----------
 
-dash = find_dev_dashboard()
 space = find_dev_genie_space()
-if dash:
-    link(f"/dashboardsv3/{dash['id']}/published", f"📊 {dash['name']}")
 if space:
     link(f"/genie/rooms/{space['id']}", f"💬 {space['name']}")
-if not space:
-    print("No Genie space yet: do Option A or B in 4.3, then deploy again.")
+else:
+    print("No Genie space yet: add it with one of the three ways above, then deploy again.")
 
 # COMMAND ----------
 
@@ -183,38 +248,7 @@ ask_genie("Which stores are underperforming right now?")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 4.5 · Final check
-# MAGIC
-# MAGIC Everything should pass now.
-# MAGIC
-# MAGIC **Why it matters:** these are the same checks the pull request runs in module 5. If they pass here, you already
-# MAGIC know your change will clear CI, before anyone else has to look at it.
-
-# COMMAND ----------
-
-rule_checks()
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## 4.6 · Same files, different targets
-# MAGIC
-# MAGIC Compare `dev` with `prod`: same resources, but a different catalog, a different identity, and locked
-# MAGIC permissions. Nobody edits a file to promote; the target does the work.
-
-# COMMAND ----------
-
-import yaml
-
-targets = yaml.safe_load(open(f"{REPO_ROOT}/databricks.yml"))["targets"]
-for name in ("dev", "prod"):
-    print(f"--- {name} ---")
-    print(yaml.safe_dump(targets[name], sort_keys=False))
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Optional · Change the dashboard and redeploy
+# MAGIC ## Optional B · Change the dashboard and redeploy
 # MAGIC
 # MAGIC In 3.3 you saw that the dashboard is a file in your bundle, `src/store_ops/dashboards/store_performance.lvdash.json`.
 # MAGIC Now that it shows real data, change it the way you'd change any code:
@@ -226,7 +260,7 @@ for name in ("dev", "prod"):
 # MAGIC 2. **See the change:** click the branch name at the top of your Git folder in Databricks. The Git dialog lists the
 # MAGIC    changed file; click it to see the diff.
 # MAGIC 3. **Deploy:** Deployments panel → target **`dev`** → **Deploy**.
-# MAGIC 4. **Refresh your dashboard** (the link in 4.4). ✅ You should see the new chart.
+# MAGIC 4. **Refresh your dashboard** (the link in 4.3). ✅ You should see the new chart.
 # MAGIC
 # MAGIC **Why it matters:** that one-file diff is exactly what you'd put in a pull request. A reviewer sees the change, the
 # MAGIC checks run, and the same file goes to prod.
