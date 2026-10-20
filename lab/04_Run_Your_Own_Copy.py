@@ -137,7 +137,7 @@ for name in ("dev", "prod"):
 # MAGIC %md
 # MAGIC ## Done with the required part of module 4
 # MAGIC
-# MAGIC If you're short on time, go straight to **`05_Pull_Request_and_Checks`**. The two optional sections below add a
+# MAGIC If you're short on time, go straight to **`05_Ship_It`**. The two optional sections below add a
 # MAGIC Genie Agent to your bundle and change the dashboard; nothing later in the lab depends on them.
 
 # COMMAND ----------
@@ -264,4 +264,4 @@ ask_genie("Which stores are underperforming right now?")
 # MAGIC **Why it matters:** that one-file diff is exactly what you'd put in a pull request. A reviewer sees the change, the
 # MAGIC checks run, and the same file goes to prod.
 # MAGIC
-# MAGIC **Next:** open **`05_Pull_Request_and_Checks`**.
+# MAGIC **Next:** open **`05_Ship_It`**.

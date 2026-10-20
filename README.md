@@ -20,7 +20,7 @@ You do everything in your **Databricks workspace**. You never need to open or ch
 3. **Open `00_START_HERE` in your Git folder**, set compute to **Serverless**, and click **Run all**. It explains
    bundles, sets up the lab environment (about 5 minutes), and checks it. Every check should show ✅.
 4. **Then follow the notebooks in the `lab` folder**, in order: `01_From_Handoff_to_Bundle` through
-   `06_Production_Is_Locked`. Each one has numbered steps, the Genie Code prompts to paste, and a "✅ you should see"
+   `05_Ship_It`. Each one has numbered steps, the Genie Code prompts to paste, and a "✅ you should see"
    after each step.
 
 **Instructors:** the talk track is [devops/instructor/TALK_TRACK.md](devops/instructor/TALK_TRACK.md), the pre-work

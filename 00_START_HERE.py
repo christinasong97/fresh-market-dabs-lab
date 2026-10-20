@@ -20,8 +20,7 @@
 # MAGIC | 2 · The guardrails DevOps owns | Genie Code fixes the job using the team's rules | 10 min |
 # MAGIC | 3 · Build the bundle with Genie Code | Add a pipeline and an orchestrator job | 20 min |
 # MAGIC | 4 · Your own development target | Deploy and run your copy; open your dashboard (optional: a Genie Agent) | 15 min |
-# MAGIC | 5 · Pull request and checks | *Instructor:* PR → checks → approval → production | 20 min |
-# MAGIC | 6 · Production is locked | *Instructor:* why hand edits in production don't stick | 5 min |
+# MAGIC | 5 · Ship it: from dev to production | Try to deploy prod; watch a pull request reach prod | 25 min |
 
 # COMMAND ----------
 
@@ -194,8 +193,7 @@ print("Ready to go." if all(results) else "Something is missing. Re-run Step 1, 
 # MAGIC | `lab/02_Guardrails_with_Genie_Code` | Genie Code fixes the job using the DevOps team's rules |
 # MAGIC | `lab/03_Build_the_Bundle` | Add the sales pipeline and the orchestrator |
 # MAGIC | `lab/04_Run_Your_Own_Copy` | Run your copy; open your dashboard (optional: a Genie Agent) |
-# MAGIC | `lab/05_Pull_Request_and_Checks` | How a change gets to production; catch a teammate's mistake |
-# MAGIC | `lab/06_Production_Is_Locked` | Why hand edits in production don't stick; wrap-up |
+# MAGIC | `lab/05_Ship_It` | The guardrails on the way to production: who can deploy, what must pass, who approves; wrap-up |
 # MAGIC
 # MAGIC Each notebook has numbered steps, the exact Genie Code prompts to paste, a "✅ you should see" after each step,
 # MAGIC and a **Catch up** cell at the end if you fall behind. You never need to switch branches.

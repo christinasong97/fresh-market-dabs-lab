@@ -300,8 +300,9 @@ def import_genie_space(title=GENIE_UI_TITLE):
     print(f"\n{DEPLOY_GENIE}")
 
 
+# The teammate's pull request, exactly as it is on the feature/weekly-department-report branch.
 VIOLATION_FILE = "resources/jobs/store_ops/so_weekly_department_report.job.yml"
-VIOLATION_YAML = """# A teammate's new job: weekly department sales for merchandising.
+VIOLATION_YAML = """# Weekly department sales report for merchandising.
 resources:
   jobs:
     so_weekly_department_report:
@@ -313,18 +314,54 @@ resources:
       email_notifications:
         on_failure:
           - jane.doe@example.com
+      schedule:
+        quartz_cron_expression: "0 0 7 ? * MON"
+        timezone_id: America/Detroit
       tasks:
         - task_key: publish_department_report
           notebook_task:
-            notebook_path: ../../../src/store_ops/notebooks/store_kpis/notify_store_ops.py
+            notebook_path: ../../../src/store_ops/notebooks/department_report/publish_department_report.py
             base_parameters:
               catalog: ${var.catalog}
               schema: ${resources.schemas.so_store_ops.name}
 """
+VIOLATION_NOTEBOOK = "src/store_ops/notebooks/department_report/publish_department_report.py"
+# Built from pieces so its notebook and cell markers don't split this helpers notebook.
+_HEADER = "# Databricks " + "notebook source"
+_CELL = "# COMMAND " + "-" * 10
+_MD = [
+    "%md",
+    "# Publish weekly department report",
+    "Week-over-week net sales by department for the merchandising team.",
+]
+_CODE = '''dbutils.widgets.text("catalog", "")
+dbutils.widgets.text("schema", "")
+catalog = dbutils.widgets.get("catalog")
+schema = dbutils.widgets.get("schema")
+
+spark.sql(f"""
+    CREATE OR REPLACE TABLE `{catalog}`.`{schema}`.gold_weekly_department_report AS
+    SELECT DATE_TRUNC('WEEK', sales_date) AS week_start, department,
+           SUM(net_sales) AS net_sales,
+           SUM(net_sales) - LAG(SUM(net_sales))
+               OVER (PARTITION BY department ORDER BY DATE_TRUNC('WEEK', sales_date)) AS wow_change
+    FROM `{catalog}`.`{schema}`.gold_department_sales
+    GROUP BY 1, 2
+""")
+display(spark.table(f"`{catalog}`.`{schema}`.gold_weekly_department_report").orderBy("week_start", "department"))
+'''
+VIOLATION_NOTEBOOK_SOURCE = "\n".join([_HEADER] + ["# MAGIC " + line for line in _MD] + ["", _CELL, "", ""]) + _CODE
+
+
+def show_teammates_change():
+    """Show the teammate's new job file, as it appears in their pull request, without adding it."""
+    print(f"+++ {VIOLATION_FILE}  (new file in the pull request)\n")
+    print(VIOLATION_YAML)
 
 
 def add_teammates_change():
     write_repo_file(VIOLATION_FILE, VIOLATION_YAML)
+    write_repo_file(VIOLATION_NOTEBOOK, VIOLATION_NOTEBOOK_SOURCE)
     print(f"✅ Added {VIOLATION_FILE}\n")
     print(VIOLATION_YAML)
 

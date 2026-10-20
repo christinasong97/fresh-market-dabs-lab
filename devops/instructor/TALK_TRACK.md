@@ -39,8 +39,7 @@ hand.** Each module adds one piece of that story.
 | 2 · The guardrails DevOps owns | 10 | Everyone |
 | 3 · Build the bundle with Genie Code | 20 | Everyone |
 | 4 · Your own development target | 15 | Everyone (optional sections: you) |
-| 5 · Pull request and checks | 20 | You, then everyone |
-| 6 · Production is locked | 5 | You |
+| 5 · Ship it: from dev to production | 25 | Everyone, then you |
 
 ## Highlight features
 
@@ -53,7 +52,7 @@ hand.** Each module adds one piece of that story.
 | Rule checks as tests | Modules 1 to 5 | Team rules are enforced by code on every change, not by a reviewer's memory |
 | Development mode | Module 4 | Every developer gets an isolated copy: prefixed names, paused schedules, own schema |
 | Variables and targets | Module 4 | Same files everywhere; only the catalog, identity, and permissions change |
-| `run_as` service principal and production mode | Modules 5 and 6 | No person deploys to a shared environment |
+| `run_as` service principal and production mode | Module 5 | No person deploys to a shared environment |
 | GitHub environments and required reviewers | Module 5 | Every prod change carries a PR, a diff, an approver, and a deploy log |
 
 ## Module 0 · Welcome and the scenario (10 min)
@@ -304,68 +303,91 @@ Ask Genie Code for a "net sales by store format" chart, **CLICK** the branch nam
 show the one-file diff, deploy, and refresh the dashboard. **SAY** "Your dashboard change is a diff a reviewer can
 read, and the same file goes to prod."
 
-## Module 5 · Pull request and checks (20 min)
+## Module 5 · Ship it: from dev to production (25 min)
 
-**CLICK** `lab/05_Pull_Request_and_Checks`, then **CLICK** the two-part table at the top.
+The theme is **guardrails and policies**. Every step answers one question: who can deploy, what has to pass, who has
+to approve, and what can't be changed by hand.
 
-**SAY** "Your alert works in dev. This is where the handoff to DevOps used to be. Now the files you tested go to
-production through automatic gates. Part 1 is on my screen: just watch. Part 2 is your turn."
+**CLICK** `lab/05_Ship_It`. **CLICK** the inner loop / outer loop diagram.
 
-### Part 1 · Watch: the path to production (about 10 min, your screen)
+**SAY** "Modules 1 to 4 were the inner loop: you built, checked, and deployed your own copy. This is the outer loop,
+the part DevOps used to do by hand. Every step in it is a policy written as code." **CLICK** the four-question table.
 
-**CLICK** the four-word table (branch, pull request, checks, deploy pipeline). **ASK** "Who here has opened a pull
-request before?" Pitch the next few minutes to the answer.
+### 5.1 · Try to ship it yourself (everyone, 4 min)
 
-**CLICK** the path diagram. **SAY** "Left to right: a teammate's branch, a pull request with checks, a merge, cert,
-an approval, prod."
+**SAY** "Your alert works in dev. So why not deploy it straight to prod? Try it."
 
-**CLICK** GitHub → **Pull requests** → the teammate's PR:
-1. **CLICK** **Files changed**: the new job, with `jane.doe@example.com`.
-2. **CLICK** **Checks**: `test_failure_notifications_go_to_a_group` failed, merge blocked.
-3. Push the fix (`${var.notification_email}`). The checks go green. Approve the review.
-4. Merge. **CLICK** **Actions**: deploy to cert as the service principal, then the orchestrator runs as the
-   integration test.
-5. **CLICK** the prod deploy waiting for review → **Approve**.
+**CLICK** Deployments panel → target **`prod`** → **Validate**. **CHECK** everyone gets the error.
 
-**SAY** "That's the change record: the PR, the diff, the checks, the approver, and the deploy log. Nobody rebuilt
-anything."
+**SAY** "It says 'Folder Users is protected'. Prod's files live in the CI service principal's own folder, and only it
+can write there. Nobody deploys production from their own login, not even an admin by accident."
 
-**CLICK** the **Why each gate exists** table. One sentence per row.
+**RUN** the cell that prints the prod target, then **CLICK** the annotated block: `mode: production`, `root_path`,
+`run_as`, `permissions`. **SAY** "Four lines in `databricks.yml`, owned by DevOps. That's the whole policy."
+
+**SAY** "So how does a change get to production? Through a pull request."
+
+### 5.2 · Watch: a pull request (your screen, 5 min)
+
+**CLICK** GitHub → **Pull requests** → **New pull request**. Base `main`, compare `feature/weekly-department-report`
+→ **Create pull request**. **SAY** "A teammate added a weekly department report on their own branch. This is how they
+ask to merge it."
+
+**CLICK** **Files changed**: two files. **SAY** "Be the reviewer." Have attendees **RUN** `show_teammates_change()`.
+
+**ASK** "Can you spot the problem before the checks do?" Give it 30 seconds. Most people miss
+`jane.doe@example.com`.
+
+**CLICK** the PR's **Checks**: `test_failure_notifications_go_to_a_group` failed, merge blocked. **SAY** "The check
+caught what review missed."
+
+### 5.3 · Your turn: run the same check (everyone, 4 min)
+
+**RUN** the first cell (adds the teammate's job, runs the checks). **CHECK** one ❌.
+
+**RUN** the second cell (the fix, or ask Genie Code). **CHECK** all ✅.
+
+**SAY** "The check that blocks a pull request is one you can run yourself, in seconds. No deploy needed."
+
+### 5.4 · Watch: merge, cert, approval, prod (your screen, 7 min)
+
+1. Push the fix (`${var.notification_email}`) to the teammate's branch. **CLICK** Checks: green. Approve the review.
+2. **CLICK** **Merge**. **CLICK** **Actions**: deploy to cert as the service principal, then the orchestrator runs as
+   the integration test.
+3. **CLICK** the prod deploy waiting for review. **ASK** "Ship it?" Take the vote, then **Approve**.
+4. **CLICK** the production demo workspace → Jobs → `fresh_market_dabs_lab_prod_so_weekly_department_report`.
+   **SAY** "It's live, run by the service principal. Nobody clicked anything in prod."
+
+**CLICK** the **gates** table. One sentence per row. **SAY** "That's the change record: the PR, the diff, the checks,
+the approver, and the deploy log. Nobody rebuilt anything."
 
 **SAY** (on classic compute) "Your production jobs run on classic clusters with policies. A bundle handles that with
 `job_clusters` and a policy, and the rule checks already enforce it. The lab uses serverless so it starts fast."
 
-**IF** CI deploys aren't set up in your production demo workspace: show steps 1 to 3 live (the checks run on GitHub
-without Databricks), then show steps 4 and 5 from screenshots or a recording.
+**IF** CI isn't running: show 5.2's PR and failing check live if the PR checks work, and show 5.4 from screenshots or
+a recording.
 
-### Part 2 · Your turn (about 10 min, everyone)
+### 5.5 · Watch: production is locked (your screen, 3 min)
 
-**SAY** "You can't open a pull request on the shared repo, so you'll reproduce the moment that mattered: the check
-that blocked the merge."
+**CLICK** the prod orchestrator job. **SAY** "It's 6am and a district manager wants the threshold changed."
 
-**RUN** Step 1 (`add_teammates_change()`). **CLICK** Step 2: Deploy, then **RUN** `rule_checks()`. **CHECK** one ❌.
+**CLICK** edit the schedule by hand. Point at the banner saying the job is managed by a bundle.
 
-**SAY** "It deployed fine, and it still breaks a rule. The same check that blocked the PR, in your copy, in seconds."
-
-**RUN** Step 3 (the fix, or ask Genie Code), redeploy, **RUN** `rule_checks()`. **CHECK** all ✅.
-
-## Module 6 · Production is locked (5 min)
-
-**CLICK** the production demo workspace → the prod orchestrator job.
-
-**SAY** "It's 6am, a district manager wants the threshold changed, and someone is tempted to edit prod by hand."
-
-**CLICK** edit the schedule in the UI. Point at the banner saying the job is managed by a bundle.
-
-**RUN** the next deploy from `main` (re-run the deploy workflow). **CLICK** the job again: the schedule is back.
+**RUN** the deploy workflow again (Actions → Deploy → **Run workflow** on `main`). **CLICK** the job: the schedule is
+back.
 
 **SAY** "Git is the record of what production should be. A hand edit leaves no record, and the next deploy erases
-it. The right way is the path you just saw: files, pull request, checks, approval."
+it."
 
 **CLICK** the prod job's **Permissions**: the service principal has **Can Manage**, everyone else **Can View**.
 
-**CLICK** the **Wrap-up** table in notebook 06 and close with the "take it home" line: start your team's bundle with a
-`dev` target, variables instead of hard-coded values, and the rule checks.
+### Wrap-up (2 min)
+
+**CLICK** the **guardrails** table in the wrap-up: each guardrail, where it lives, who owns it. **SAY** "Every
+guardrail you saw today is a file in this repo. DevOps writes them once, and everyone works inside them."
+
+Close with the "take it home" line: start your team's bundle with a `dev` target, variables instead of hard-coded
+values, and the rule checks.
 
 ## Likely questions
 
