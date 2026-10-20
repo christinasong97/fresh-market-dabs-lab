@@ -30,10 +30,6 @@
 # MAGIC %md
 # MAGIC ## 3.1 · The pipeline
 # MAGIC
-# MAGIC **Why it matters:** a pipeline is a bundle resource just like a job. It uses the same variables (no hard-coded
-# MAGIC catalog), the same naming rules, and the same rule checks. Its data quality rules (**expectations**: what counts
-# MAGIC as a bad row) are code files too, so changing them goes through a pull request like any other change.
-# MAGIC
 # MAGIC The pipeline builds three layers of tables, often called a **medallion**:
 # MAGIC
 # MAGIC | Layer | What it holds |
@@ -42,7 +38,7 @@
 # MAGIC | **Silver** | Cleaned data, with bad rows dropped |
 # MAGIC | **Gold** | Business-ready totals, like daily sales per store, that the KPI job and dashboard read |
 # MAGIC
-# MAGIC Ask Genie Code (agent mode):
+# MAGIC **Ask Genie Code** (agent mode):
 # MAGIC
 # MAGIC ```
 # MAGIC Create a Spark Declarative Pipeline for store_ops called so_sales_medallion
@@ -58,6 +54,10 @@
 # MAGIC Put the data quality rules in expectations/ dictionaries: bronze expect, silver expect_or_drop, gold
 # MAGIC expect_or_fail.
 # MAGIC ```
+# MAGIC
+# MAGIC **Why it matters:** a pipeline is a bundle resource just like a job. It uses the same variables (no hard-coded
+# MAGIC catalog), the same naming rules, and the same rule checks. Its data quality rules (**expectations**: what counts
+# MAGIC as a bad row) are code files too, so changing them goes through a pull request like any other change.
 # MAGIC
 # MAGIC Notice the severity convention: **drop** bad rows in silver, **fail** the run if gold breaks a rule, so nobody
 # MAGIC downstream ever sees bad data.
@@ -83,14 +83,16 @@ for root, dirs, files in os.walk(f"{REPO_ROOT}/src/store_ops/pipelines/sales_med
 # MAGIC %md
 # MAGIC ## 3.2 · The orchestrator
 # MAGIC
-# MAGIC **Why it matters:** today, run order is encoded in names (`Job_00`, `Job_01`, `Job_02`) and in people's heads.
-# MAGIC The team's standard puts it in one **orchestrator** job per domain, so the order is written down, reviewed, and
-# MAGIC the same in every environment. Ask Genie Code:
+# MAGIC **Ask Genie Code:**
 # MAGIC
 # MAGIC ```
 # MAGIC Create resources/jobs/store_ops/orchestrator.job.yml with a job called so_orchestrator: first refresh the
 # MAGIC so_sales_medallion pipeline, then run the so_store_kpis job. Schedule it daily at 6am America/Detroit.
 # MAGIC ```
+# MAGIC
+# MAGIC **Why it matters:** today, run order is encoded in names (`Job_00`, `Job_01`, `Job_02`) and in people's heads.
+# MAGIC The team's standard puts it in one **orchestrator** job per domain, so the order is written down, reviewed, and
+# MAGIC the same in every environment.
 
 # COMMAND ----------
 

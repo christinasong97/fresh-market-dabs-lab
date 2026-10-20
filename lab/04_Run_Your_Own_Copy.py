@@ -123,7 +123,7 @@ for name in ("dev", "prod"):
 # MAGIC %md
 # MAGIC ## Optional · Change something and redeploy
 # MAGIC
-# MAGIC Ask Genie Code to add a chart to `src/store_ops/dashboards/store_performance.lvdash.json` (for example, "add a
+# MAGIC **Ask Genie Code** to add a chart to `src/store_ops/dashboards/store_performance.lvdash.json` (for example, "add a
 # MAGIC bar chart of net sales by store format"), deploy `dev` again, and refresh your dashboard. That one-file diff is
 # MAGIC exactly what you'd put in a pull request.
 # MAGIC

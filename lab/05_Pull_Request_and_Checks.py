@@ -72,7 +72,7 @@ rule_checks()
 # MAGIC %md
 # MAGIC ## 5.3 · Fix it
 # MAGIC
-# MAGIC Ask Genie Code: *"The rule checks say so_weekly_department_report sends failure emails to a person. Fix it."*
+# MAGIC **Ask Genie Code:** *"The rule checks say so_weekly_department_report sends failure emails to a person. Fix it."*
 # MAGIC Or run the next cell. Then redeploy and rerun the checks.
 # MAGIC
 # MAGIC ✅ You should see every rule pass.
