@@ -102,6 +102,21 @@ show_teammates_change()
 # MAGIC Found it? The job sends failure emails to `jane.doe@example.com`, a person, not the team list. When Jane is on
 # MAGIC vacation, nobody hears about failures. Easy to miss in a review, and on the instructor's screen the **rule checks
 # MAGIC fail**, so the merge button is blocked.
+# MAGIC
+# MAGIC **How does GitHub know to block it?**
+# MAGIC
+# MAGIC > The team's rules are written as tests. GitHub runs them on every pull request, and `main` won't accept anything
+# MAGIC > that fails.
+# MAGIC
+# MAGIC | | What it is | Where it lives |
+# MAGIC |---|---|---|
+# MAGIC | 1. **The rules are tests** | Small checks on the bundle files, like "emails go to the team list" | `tests/bundle/` |
+# MAGIC | 2. **GitHub runs them** | On every pull request, automatically. This is CI | `.github/workflows/ci.yml` |
+# MAGIC | 3. **A failure shows a red ❌** | The "Lint and tests" check on the pull request | The pull request page |
+# MAGIC | 4. **`main` won't accept a ❌** | A rule on `main`: no merging until the checks pass | GitHub settings |
+# MAGIC
+# MAGIC Think of a building inspection: the rules are the building code, CI is the inspector, and you can't move in until
+# MAGIC it passes.
 
 # COMMAND ----------
 

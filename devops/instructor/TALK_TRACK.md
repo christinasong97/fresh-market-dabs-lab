@@ -375,8 +375,23 @@ nobody hears that the report broke."
 marked **Required**.
 
 **SAY** "And this is a policy too. `main` has a rule: no merge unless the checks pass. Not 'please remember to check',
-a rule. Nobody can merge this, me included." (Optional: **CLICK** **Settings → Rules** to show the ruleset
-`main: checks must pass`.)
+a rule. Nobody can merge this, me included."
+
+**How GitHub knows to block it (1 min).** **CLICK** the "How does GitHub know to block it?" box in the notebook.
+
+**SAY** the one-liner: "The team's rules are written as tests. GitHub runs them on every pull request, and `main`
+won't accept anything that fails."
+
+Then walk the four rows, one sentence each:
+1. "The rules are tests: small checks that read our bundle files, like 'failure emails go to the team list'."
+2. "GitHub runs them on every pull request, automatically. That's CI."
+3. "If one fails, the pull request gets a red X, like the one we just saw."
+4. "And `main` has a rule: no merging with a red X."
+
+**SAY** (if the room needs an analogy) "It's a building inspection. The rules are the building code, CI is the
+inspector, and you can't move in until it passes."
+
+Optional: **CLICK** **Settings → Rules** to show the ruleset `main: checks must pass`.
 
 ### 5.3 · Your turn: run the same check (everyone, 4 min)
 
