@@ -86,24 +86,70 @@ display(spark.sql(f"SELECT * FROM `{CATALOG}`.`{schema}`.gold_store_alerts ORDER
 # MAGIC ## 4.3 · Add an agent to your bundle: the Genie space
 # MAGIC
 # MAGIC A Genie space is an agent that answers questions about specific tables, and it can't be created until those
-# MAGIC tables exist. Now that your orchestrator has built them, add **Store Ops Genie** to the bundle. Two steps:
-# MAGIC
-# MAGIC 1. **Run the cell.** It adds the Genie space's YAML file to your Git folder and shows it. This only adds the
-# MAGIC    file; the Genie space doesn't exist yet.
-# MAGIC 2. **Deploy again:** Deployments panel → target **`dev`** → **Deploy**. This is what creates the Genie space.
-# MAGIC    Wait until the deployment finishes, then go to 4.4.
+# MAGIC tables exist. Now that your orchestrator has built them, add **Store Ops Genie** to the bundle.
 # MAGIC
 # MAGIC **Why it matters:** district managers don't write SQL. A Genie space lets them ask "Which stores are behind
 # MAGIC this week?" in plain English. Because it's in the bundle, its instructions and example questions are code:
 # MAGIC reviewed in the same pull request as the tables they describe, and promoted to prod with them.
 # MAGIC
-# MAGIC Notice how it names its tables: the YAML uses the bundle's catalog variable and schema, not a fixed catalog. In
-# MAGIC dev it reads your schema; in prod it reads prod's.
+# MAGIC **Pick one of the two options.**
+# MAGIC
+# MAGIC ### Option A · Build it in the UI, then bring it into your bundle
+# MAGIC The Deployments panel's **Add existing** doesn't offer Genie spaces yet, so you build the space in the UI and a
+# MAGIC cell turns it into bundle YAML.
+# MAGIC 1. In the left sidebar, click **Genie**, then **New**.
+# MAGIC 2. Add your tables: catalog **`fresh_market_lab_int`** → **your schema** (the cell below prints its name) →
+# MAGIC    select `gold_daily_store_sales`, `gold_department_sales`, and `gold_store_alerts`.
+# MAGIC 3. Name the space **`My Store Ops Genie`** and choose the **Serverless Starter Warehouse**. Save it.
+# MAGIC 4. Optional: in its **Instructions**, add *"'Right now' means the last 14 days of sales_date."* Then ask it
+# MAGIC    *"Which stores are underperforming right now?"*
+# MAGIC 5. Run the Option A cell. It saves the space as a bundle file and swaps your schema's name for the bundle's
+# MAGIC    variables, so the same file works in every target.
+# MAGIC
+# MAGIC ### Option B · Add the finished file
+# MAGIC Run the Option B cell. It adds a ready-made Genie space file, with instructions and example SQL, to your bundle.
+# MAGIC
+# MAGIC ### Then, either option: deploy again
+# MAGIC The cell only adds a file; the Genie space doesn't exist yet. **Deploy:** Deployments panel → target **`dev`** →
+# MAGIC **Deploy**. That's what creates the Genie space. Wait until the deployment finishes, then go to 4.4.
 
 # COMMAND ----------
 
-catch_up(4)
-show_file("resources/genie_spaces/store_ops/so_store_ops_genie.genie_space.yml")
+print(f"Your schema: {dev_schema()}")
+
+# COMMAND ----------
+
+# Option A only: you built "My Store Ops Genie" in the UI.
+import_genie_space("My Store Ops Genie")
+
+# COMMAND ----------
+
+# Option B only: add the finished file.
+add_genie_space()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC **Read the Genie space's YAML.** Run the cell, then look for these parts:
+# MAGIC
+# MAGIC ```
+# MAGIC title: Store Ops Genie (${var.environment})       ← its own name in every target
+# MAGIC warehouse_id: ${var.warehouse_id}                 ← looked up by name, so no IDs in the file
+# MAGIC serialized_space:
+# MAGIC   data_sources:
+# MAGIC     tables:
+# MAGIC       - identifier: ${var.catalog}.${resources.schemas.so_store_ops.name}.gold_store_alerts
+# MAGIC                                                   ← your schema in dev, prod's schema in prod
+# MAGIC   instructions:
+# MAGIC     text_instructions: ...                        ← what Genie should know about the data
+# MAGIC     example_question_sqls: ...                    ← known-good SQL for common questions (Option B)
+# MAGIC ```
+# MAGIC
+# MAGIC Change an instruction here, and the change goes through a pull request like any other code.
+
+# COMMAND ----------
+
+show_file(GENIE_FILE)
 
 # COMMAND ----------
 
@@ -128,7 +174,7 @@ if dash:
 if space:
     link(f"/genie/rooms/{space['id']}", f"💬 {space['name']}")
 if not space:
-    print("No Genie space yet: run the cell in 4.3, then deploy again.")
+    print("No Genie space yet: do Option A or B in 4.3, then deploy again.")
 
 # COMMAND ----------
 

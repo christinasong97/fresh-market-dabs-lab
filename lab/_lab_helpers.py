@@ -6,6 +6,7 @@
 # COMMAND ----------
 
 import base64
+import json
 import os
 import re
 import subprocess
@@ -228,8 +229,7 @@ def show_imported_job():
     return rel
 
 
-def catch_up(module):
-    """Copy the finished files for a module into your Git folder, then redeploy to keep going."""
+def _copy_solution(module):
     root = os.path.join(REPO_ROOT, "lab", "solutions", f"module_{module:02d}").removeprefix("/Workspace")
     copied = []
     for entry in w.workspace.list(root, recursive=True):
@@ -240,12 +240,64 @@ def catch_up(module):
         content = base64.b64decode(w.workspace.export(entry.path).content).decode()
         write_repo_file(rel, content)
         copied.append(rel)
+    return sorted(copied)
+
+
+def catch_up(module):
+    """Copy the finished files for a module into your Git folder, then redeploy to keep going."""
+    copied = _copy_solution(module)
     if module >= 2:
         for rel in imported_job_files():
             remove_repo_file(rel)
-    for rel in sorted(copied):
+    for rel in copied:
         print(f"✅ {rel}")
     print("\nCaught up. Now redeploy: Deployments panel → target dev → Deploy.")
+
+
+GENIE_FILE = "resources/genie_spaces/store_ops/so_store_ops_genie.genie_space.yml"
+GENIE_UI_TITLE = "My Store Ops Genie"
+DEPLOY_GENIE = "This only adds the file; the Genie space doesn't exist yet. Deploy dev to create it."
+
+
+def add_genie_space():
+    """Add the finished Store Ops Genie space file to your bundle."""
+    _copy_solution(4)
+    print(f"✅ Added {GENIE_FILE} to your bundle.\n\n{DEPLOY_GENIE}")
+
+
+def import_genie_space(title=GENIE_UI_TITLE):
+    """Turn a Genie space you built in the UI into a bundle file, with no hard-coded catalog or schema."""
+    matches = [s for s in _list_all("/api/2.0/genie/spaces", "spaces") if s.get("title", "").lower() == title.lower()]
+    if not matches:
+        print(f"❌ No Genie space called '{title}'. Create it in the UI first (the steps above), then rerun this cell.")
+        return
+    space_id = matches[0]["space_id"]
+    space = w.api_client.do("GET", f"/api/2.0/genie/spaces/{space_id}", query={"include_serialized_space": "true"})
+    definition = json.dumps(json.loads(space["serialized_space"]))
+    # Your schema's name is only right in dev. Point the space at whatever schema each target uses.
+    here = f"{CATALOG}.{dev_schema()}"
+    portable = "${var.catalog}.${resources.schemas.so_store_ops.name}"
+    found = definition.count(here) + definition.count(f"`{CATALOG}`.`{dev_schema()}`")
+    definition = definition.replace(f"`{CATALOG}`.`{dev_schema()}`", portable).replace(here, portable)
+    resource = {
+        "resources": {
+            "genie_spaces": {
+                "so_store_ops_genie": {
+                    "title": "Store Ops Genie (${var.environment})",
+                    "description": space.get("description") or "Ask about store sales and which stores need a review.",
+                    "warehouse_id": "${var.warehouse_id}",
+                    "serialized_space": json.loads(definition),
+                }
+            }
+        }
+    }
+    header = f"# Built in the UI as '{title}', then brought into the bundle with import_genie_space().\n"
+    write_repo_file(GENIE_FILE, header + yaml.safe_dump(resource, sort_keys=False, width=1000))
+    print(f"✅ Saved '{title}' as {GENIE_FILE}.")
+    print(f"   Replaced {found} reference(s) to {here} with {portable}.")
+    if CATALOG in definition:
+        print(f"⚠️  The file still mentions {CATALOG}. Ask Genie Code to replace it with ${{var.catalog}}.")
+    print(f"\n{DEPLOY_GENIE}")
 
 
 VIOLATION_FILE = "resources/jobs/store_ops/so_weekly_department_report.job.yml"
@@ -319,7 +371,7 @@ def ask_genie(question):
     """Ask your dev Genie space a question and print the SQL it wrote and its answer."""
     space = find_dev_genie_space()
     if space is None:
-        print("❌ No dev Genie space yet. Run the cell in 4.3, then deploy again.")
+        print("❌ No dev Genie space yet. Do Option A or B in 4.3, then deploy again.")
         return
     base = f"/api/2.0/genie/spaces/{space['id']}"
     started = w.api_client.do("POST", f"{base}/start-conversation", body={"content": question})

@@ -6,7 +6,8 @@
 # MAGIC so you never need a new workspace.
 # MAGIC
 # MAGIC **Removes:**
-# MAGIC - Everything you deployed to `dev`: jobs, pipeline, dashboard, Genie space, your `dev_<you>_store_ops` schema,
+# MAGIC - Everything you deployed to `dev`: jobs, pipeline, dashboard, Genie space (and `My Store Ops Genie` from the UI),
+# MAGIC   your `dev_<you>_store_ops` schema,
 # MAGIC   and the `dev` deployment state
 # MAGIC - Files the modules added to this Git folder: module 1's imports, Genie Code's files, catch-up files, and the
 # MAGIC   teammate's job from module 5
@@ -79,7 +80,8 @@ for p in w.pipelines.list_pipelines():
         print(f"deleted pipeline: {p.name}")
 
 for s in list_all("/api/2.0/genie/spaces", "spaces"):
-    if s.get("title", "").startswith(prefix):
+    # The dev copy, plus the one built in the UI for module 4's Option A.
+    if s.get("title", "").startswith(prefix) or s.get("title", "") == "My Store Ops Genie":
         w.api_client.do("DELETE", f"/api/2.0/genie/spaces/{s['space_id']}")
         print(f"deleted Genie space: {s['title']}")
 

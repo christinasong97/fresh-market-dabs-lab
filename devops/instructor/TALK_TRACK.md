@@ -259,11 +259,23 @@ deployed copy, so always deploy first."
 **SAY** "Those are the silver rules at work: a register glitch never reaches a district manager's report. And this
 is the list Store Ops follows up on."
 
-**RUN** 4.3 (adds the Genie space's file). **CLICK** Deploy again. **SAY** "The cell only adds the file. Deploying is
-what creates the Genie space."
+**CLICK** 4.3. **SAY** "A Genie space can only be created once its tables exist, which is why it joins now."
 
-**SAY** "A Genie space can only be created once its tables exist, which is why it joins now. Its instructions and
-example questions are code, reviewed in the same pull request as the tables."
+**Two options, pick one to show on screen** (Option A is the better demo if you have 5 minutes):
+- **Option A, the UI:** **CLICK** Genie → **New** → `fresh_market_lab_int` → your dev schema → the three gold tables →
+  name it `My Store Ops Genie` → Serverless Starter Warehouse → save. Ask it one question. **RUN**
+  `import_genie_space("My Store Ops Genie")`.
+  **SAY** "There's no Add existing for Genie spaces in the Deployments panel yet, so a cell exports it. Notice it
+  swaps my schema's name for the bundle's variables, so the same file works in prod."
+- **Option B, the finished file:** **RUN** `add_genie_space()`. **SAY** "This one comes with instructions and example
+  SQL, written once and reviewed like code."
+
+**RUN** the YAML cell and **CLICK** the annotated parts: the title per target, the warehouse lookup, the table
+identifiers using variables, the instructions.
+
+**SAY** "Its instructions and example questions are code, reviewed in the same pull request as the tables."
+
+**CLICK** Deploy again. **SAY** "The cell only adds the file. Deploying is what creates the Genie space."
 
 **RUN** 4.4. **CLICK** the dashboard link. **SAY** "This is the dashboard from 3.3, now with our data." Then **CLICK**
 the Genie space link and **RUN** `ask_genie(...)`.
