@@ -5,25 +5,21 @@
 # MAGIC **Goal:** put the whole store sales data product in one bundle: the data, the job that uses it, the run order,
 # MAGIC and the dashboard.
 # MAGIC
-# MAGIC ### Why this module
-# MAGIC
 # MAGIC Your KPI job from module 2 reads `gold_daily_store_sales`, but nothing creates that table yet. Today, a table
 # MAGIC like this comes from another job, the run order lives in job names (`Job_00` → `Job_01` → `Job_02`), and each
 # MAGIC piece is rebuilt by hand in every environment. If one piece reaches production without the other, it breaks.
 # MAGIC
 # MAGIC In this module, every piece goes into the same bundle:
 # MAGIC
-# MAGIC | Piece | What it does | Where it comes from |
-# MAGIC |---|---|---|
-# MAGIC | Pipeline `so_sales_medallion` | Turns raw sales files into clean tables, like `gold_daily_store_sales` | You, in 3.1 |
-# MAGIC | Job `so_store_kpis` | Flags stores that are behind their sales target | Module 2 |
-# MAGIC | Orchestrator `so_orchestrator` | Runs the pipeline first, then the KPI job | You, in 3.2 |
-# MAGIC | Dashboard `so_store_performance` | Shows the results | Already in the bundle (3.3) |
+# MAGIC | Piece | What it does |
+# MAGIC |---|---|
+# MAGIC | Pipeline `so_sales_medallion` | Turns raw sales files into clean tables, like `gold_daily_store_sales` |
+# MAGIC | Job `so_store_kpis` | Flags stores that are behind their sales target |
+# MAGIC | Orchestrator `so_orchestrator` | Runs the pipeline first, then the KPI job |
+# MAGIC | Dashboard `so_store_performance` | Shows the results |
 # MAGIC
 # MAGIC **One bundle means:** reviewed together in one pull request, deployed together with one click, and promoted
 # MAGIC together to cert and prod. Nothing reaches production without the pieces it depends on.
-# MAGIC
-# MAGIC (The Genie space joins in module 4, once the tables exist.)
 
 # COMMAND ----------
 
