@@ -117,7 +117,7 @@
 # MAGIC | Creates | Used for |
 # MAGIC |---|---|
 # MAGIC | Catalogs `fresh_market_lab_int`, `_cert`, `_prod` | One catalog per target |
-# MAGIC | `landing.raw` volume with synthetic POS data | The "source system" your pipeline reads |
+# MAGIC | `landing.raw` volume in `fresh_market_lab_int`, with synthetic POS data | The "source system" your pipeline reads |
 # MAGIC | SQL warehouse `Serverless Starter Warehouse` (already in Free Edition) | Your dashboard and Genie space |
 # MAGIC | Job `Job_02_PL_Store_KPI_Alerts` | The hand-built job you start with in module 1 |
 # MAGIC | `/Workspace/.assistant_workspace_instructions.md` | The DevOps team's rules for Genie Code |
@@ -145,6 +145,7 @@ dbutils.notebook.run(
         "cicd_service_principal": "",
         "warehouse_name": WAREHOUSE,
         "stage_data": "auto",
+        "stage_targets": "int",  # your dev copy reads int; cert and prod data are only needed for CI
     },
 )
 print("Setup finished. Run the next cell to check it.")

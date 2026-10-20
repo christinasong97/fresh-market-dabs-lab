@@ -8,6 +8,8 @@
 import base64
 import os
 import re
+import subprocess
+import sys
 import time
 
 from databricks.sdk import WorkspaceClient
@@ -88,24 +90,33 @@ def run_job(key, quiet=False):
 
 
 def rule_checks():
-    """Run the same checks CI runs on every pull request, and explain the results."""
-    print("Running admin_rule_checks (about 1 minute)...")
-    run = run_job("admin_rule_checks", quiet=True)
-    if run is None:
-        return
-    logs = w.jobs.get_run_output(run.tasks[0].run_id).logs or ""
-    logs = re.sub(r"\x1b\[[0-9;]*m", "", logs)
+    """Run the same checks CI runs on every pull request, on the files in your Git folder, and explain the results."""
+    print("Running the rule checks...")
+    env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}  # Git folders don't allow __pycache__ folders
+    try:
+        import pytest  # noqa: F401
+    except ImportError:
+        subprocess.run([sys.executable, "-m", "pip", "install", "-q", "pytest"], check=True, env=env)
+    result = subprocess.run(
+        [sys.executable, "-m", "pytest", "tests/bundle", "-v", "-o", "addopts=", "-p", "no:cacheprovider", "--rootdir=."],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    logs = re.sub(r"\x1b\[[0-9;]*m", "", result.stdout + result.stderr)
     results = {}
-    for test, result in re.findall(r"::(test_\w+)(?:\[[^\]]*\])? (PASSED|FAILED|SKIPPED)", logs):
+    for test, outcome in re.findall(r"::(test_\w+)(?:\[[^\]]*\])? (PASSED|FAILED|SKIPPED)", logs):
         # Parameterized tests appear once per target; any failure counts as a failure.
         if results.get(test) != "FAILED":
-            results[test] = result
+            results[test] = outcome
     if not results:
-        print("Couldn't read the results. Open the job run to see the output.")
+        print("Couldn't run the checks. Last lines of the output:\n")
+        print("\n".join(logs.strip().splitlines()[-20:]))
         return
     failed = [t for t, r in results.items() if r == "FAILED"]
-    for test, result in results.items():
-        icon = {"PASSED": "✅", "FAILED": "❌", "SKIPPED": "⏭"}[result]
+    for test, outcome in results.items():
+        icon = {"PASSED": "✅", "FAILED": "❌", "SKIPPED": "⏭"}[outcome]
         print(f"{icon} {RULES.get(test, test)}")
     print()
     if failed:

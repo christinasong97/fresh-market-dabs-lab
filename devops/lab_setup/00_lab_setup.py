@@ -26,6 +26,7 @@ dbutils.widgets.text("attendee_principal", "account users", "Attendee group (bla
 dbutils.widgets.text("cicd_service_principal", "", "CI/CD service principal app ID (blank = skip)")
 dbutils.widgets.text("warehouse_name", "fresh_market_lab_warehouse", "SQL warehouse name")
 dbutils.widgets.dropdown("stage_data", "auto", ["auto", "true", "false"], "Stage landing data (auto = only if missing)")
+dbutils.widgets.text("stage_targets", "int,cert,prod", "Targets to stage data for (attendees only need int)")
 
 prefix = dbutils.widgets.get("catalog_prefix").strip()
 storage_root = dbutils.widgets.get("catalog_storage_root").strip().rstrip("/")
@@ -33,6 +34,7 @@ attendees = dbutils.widgets.get("attendee_principal").strip()
 cicd_sp = dbutils.widgets.get("cicd_service_principal").strip()
 warehouse_name = dbutils.widgets.get("warehouse_name").strip()
 stage_data = dbutils.widgets.get("stage_data")
+stage_targets = [t.strip() for t in dbutils.widgets.get("stage_targets").split(",") if t.strip()]
 
 catalogs = {t: f"{prefix}_{t}" for t in ("int", "cert", "prod")}
 
@@ -104,7 +106,8 @@ def has_landing_data(catalog):
         return False
 
 
-missing = [c for c in catalogs.values() if stage_data == "true" or (stage_data == "auto" and not has_landing_data(c))]
+to_stage = [catalogs[t] for t in stage_targets]
+missing = [c for c in to_stage if stage_data == "true" or (stage_data == "auto" and not has_landing_data(c))]
 if missing:
     dbutils.notebook.run("./stage_landing_data", 1800, {"catalogs": ",".join(missing)})
     print(f"landing data staged: {', '.join(missing)}")

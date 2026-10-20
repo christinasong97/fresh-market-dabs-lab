@@ -191,8 +191,15 @@ job_file = show_imported_job()
 # MAGIC %md
 # MAGIC ## 1.6 · Run the team's checks
 # MAGIC
-# MAGIC These are the **same checks CI runs on every pull request**, packaged as a job in the bundle. Expect about five
-# MAGIC failures. That's the point: the job deploys, but it doesn't meet the team's standards.
+# MAGIC These are the **same checks CI runs on every pull request** (`tests/bundle/` in your Git folder). They read your
+# MAGIC bundle's files and check them against the team's rules: who gets failure emails, tags, naming, no hard-coded
+# MAGIC catalogs, and how the shared targets are locked down. They take a few seconds.
+# MAGIC
+# MAGIC **Why it matters:** **Validate** only checks that the YAML is valid. These check that it follows the team's
+# MAGIC rules. Running them here, you find out in seconds, not after you open a pull request and wait for CI, and
+# MAGIC nobody in DevOps has to catch it in review.
+# MAGIC
+# MAGIC Expect about five failures. That's the point: the job deploys, but it doesn't meet the team's standards.
 
 # COMMAND ----------
 
