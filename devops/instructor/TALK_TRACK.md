@@ -20,8 +20,10 @@ hand.** Each module adds one piece of that story.
 **One day before**
 - Your **demo workspace** (Free Edition, looks like an attendee's): Git folder created, `00_START_HERE` run, all ✅.
   Stop there. If you rehearsed in it, run `devops/instructor/reset_demo` first.
-- Your **production demo workspace** (where GitHub Actions deploys int, cert, prod): prod deployed, the example pull
-  request ready (the teammate's job with `jane.doe@example.com`), the cert integration test run once.
+- Your **production demo workspace** (where GitHub Actions deploys int, cert, prod): prod deployed, and the cert
+  integration test run once.
+- **GitHub:** no open pull request from `feature/weekly-department-report` (you open it live in 5.2), and that
+  branch still has `jane.doe@example.com`. Optional: open a backup pull request in case GitHub is slow.
 - Pre-work email sent (`devops/instructor/PRE_WORK_EMAIL.md`). Follow up with anyone who hasn't replied ✅.
 - Backup: a screen recording of module 4's orchestrator run and dashboard, in case serverless is slow.
 
@@ -329,17 +331,42 @@ can write there. Nobody deploys production from their own login, not even an adm
 
 ### 5.2 · Watch: a pull request (your screen, 5 min)
 
-**CLICK** GitHub → **Pull requests** → **New pull request**. Base `main`, compare `feature/weekly-department-report`
-→ **Create pull request**. **SAY** "A teammate added a weekly department report on their own branch. This is how they
-ask to merge it."
+Everything in 5.2 happens on GitHub, in your browser, signed in as the repo owner.
 
-**CLICK** **Files changed**: two files. **SAY** "Be the reviewer." Have attendees **RUN** `show_teammates_change()`.
+**Open the pull request (1 min)**
+1. **CLICK** `https://github.com/christinasong97/fresh-market-dabs-lab` → **Pull requests** → **New pull request**.
+2. **CLICK** base **`main`**, compare **`feature/weekly-department-report`**. GitHub shows two changed files.
+3. **CLICK** **Create pull request**, title it "Add weekly department report job", **CLICK** **Create pull request**.
 
-**ASK** "Can you spot the problem before the checks do?" Give it 30 seconds. Most people miss
-`jane.doe@example.com`.
+**SAY** "A teammate added a weekly department report for merchandising, on their own branch. A pull request is how
+they ask to merge it into `main`, the branch production is built from. It shows exactly what changed, and nothing
+merges until it passes."
 
-**CLICK** the PR's **Checks**: `test_failure_notifications_go_to_a_group` failed, merge blocked. **SAY** "The check
-caught what review missed."
+**Be the reviewer (1 min)**
+
+**CLICK** **Files changed**. **SAY** "You're the reviewer. Look at the job file on my screen, or run
+`show_teammates_change()` in your notebook."
+
+**ASK** "Would you approve this? Anything wrong?" Give it 30 seconds. Most people approve it or comment on the
+schedule. Few notice `jane.doe@example.com`.
+
+**The checks catch it (2 min)**
+
+**CLICK** the **Conversation** tab and scroll to the checks at the bottom. **SAY** "While we were reading, CI started:
+the same checks you've been running all day." **CI / Lint and tests** fails in about 10 seconds.
+
+**CLICK** **Details** → the **Unit and bundle rule tests** step. Point at the failure:
+`test_failure_notifications_go_to_a_group` ... `on_failure -> jane.doe@example.com`.
+
+**SAY** "The check caught what review missed: failure emails go to Jane, not the team list. When Jane's on vacation,
+nobody hears that the report broke."
+
+**CLICK** back to **Conversation** and point at the merge box: **Merging is blocked**, with **Lint and tests**
+marked **Required**.
+
+**SAY** "And this is a policy too. `main` has a rule: no merge unless the checks pass. Not 'please remember to check',
+a rule. Nobody can merge this, me included." (Optional: **CLICK** **Settings → Rules** to show the ruleset
+`main: checks must pass`.)
 
 ### 5.3 · Your turn: run the same check (everyone, 4 min)
 
@@ -351,21 +378,35 @@ caught what review missed."
 
 ### 5.4 · Watch: merge, cert, approval, prod (your screen, 7 min)
 
-1. Push the fix (`${var.notification_email}`) to the teammate's branch. **CLICK** Checks: green. Approve the review.
-2. **CLICK** **Merge**. **CLICK** **Actions**: deploy to cert as the service principal, then the orchestrator runs as
-   the integration test.
-3. **CLICK** the prod deploy waiting for review. **ASK** "Ship it?" Take the vote, then **Approve**.
+**Fix it in the pull request (2 min)**
+1. **CLICK** **Files changed** → the job file → **⋯** → **Edit file**.
+2. Change `- jane.doe@example.com` to `- ${var.notification_email}`.
+3. **CLICK** **Commit changes** → keep **Commit directly to the `feature/weekly-department-report` branch** →
+   **Commit changes**.
+
+**SAY** "Same one-line fix you just made in your notebook. Pushing it reruns the checks."
+
+**CLICK** **Conversation**. **CHECK** **Lint and tests** goes green in about 10 seconds and the merge box turns green.
+
+**SAY** "Checks pass, so the rule lets it through. In your team, a reviewer would approve here too."
+
+**Merge and deploy (5 min)**
+1. **CLICK** **Merge pull request** → **Confirm merge**. **SAY** "Merging is what starts deployment."
+2. **CLICK** **Actions** → the **Deploy** run on `main`: deploy to cert as the service principal, then the
+   orchestrator runs as the integration test.
+3. **CLICK** the prod job waiting for review. **ASK** "Ship it?" Take the vote, then **Review deployments** →
+   **Approve and deploy**.
 4. **CLICK** the production demo workspace → Jobs → `fresh_market_dabs_lab_prod_so_weekly_department_report`.
    **SAY** "It's live, run by the service principal. Nobody clicked anything in prod."
+
+**IF** the Deploy run is skipped (CI deploys aren't set up): **SAY** "In your setup, merging kicks off the deploy to
+cert, a test run, and an approval for prod. Here's what that looks like," and show the screenshots or recording.
 
 **CLICK** the **gates** table. One sentence per row. **SAY** "That's the change record: the PR, the diff, the checks,
 the approver, and the deploy log. Nobody rebuilt anything."
 
 **SAY** (on classic compute) "Your production jobs run on classic clusters with policies. A bundle handles that with
 `job_clusters` and a policy, and the rule checks already enforce it. The lab uses serverless so it starts fast."
-
-**IF** CI isn't running: show 5.2's PR and failing check live if the PR checks work, and show 5.4 from screenshots or
-a recording.
 
 ### 5.5 · Watch: production is locked (your screen, 3 min)
 
@@ -388,6 +429,18 @@ guardrail you saw today is a file in this repo. DevOps writes them once, and eve
 
 Close with the "take it home" line: start your team's bundle with a `dev` target, variables instead of hard-coded
 values, and the rule checks.
+
+### After the session: reset GitHub for the next one
+
+The live demo merges the teammate's job into `main`. Before the next session, from a clone of the repo and signed in
+to the `gh` CLI as the repo owner, run:
+
+```
+bash devops/instructor/reset_github_demo.sh
+```
+
+It removes the teammate's job from `main` (through a pull request, since `main` requires the checks), then recreates
+`feature/weekly-department-report` with Jane's email, so the next pull request fails the check again.
 
 ## Likely questions
 
