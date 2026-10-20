@@ -27,20 +27,18 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 4.1 · Deploy, then run the orchestrator
+# MAGIC ## 4.1 · Check the morning run
 # MAGIC
-# MAGIC **Step 1 · Deploy first.** The cell below runs your *deployed* copy of the orchestrator, so deploy before you run
-# MAGIC it. Even if you deployed at the end of module 3, deploying again is quick and makes sure your dev copy matches
-# MAGIC your files.
-# MAGIC 1. In your Git folder in Databricks, open **`databricks.yml`**. The **Deployments** panel (rocket icon) opens.
-# MAGIC 2. Choose target **`dev`** and click **Deploy**. Wait until the panel says the deployment finished.
+# MAGIC You started the orchestrator at the end of module 3 (3.5). It runs the pipeline, then the KPI job.
 # MAGIC
-# MAGIC **Step 2 · Run the cell.** It runs the pipeline, then the KPI job, and waits for both. It takes about 3 to 5
-# MAGIC minutes. Click the run link it prints to watch it.
+# MAGIC **Run the cell.** If your run has finished, it shows the result right away. If it's still going, it waits and
+# MAGIC prints progress every minute. Didn't start it in 3.5? The cell starts it now; it takes several minutes. Click the
+# MAGIC run link to watch it.
 # MAGIC
 # MAGIC ✅ You should see `so_orchestrator: SUCCESS`, with `refresh_sales` and `publish_store_kpis` both succeeding.
 # MAGIC
-# MAGIC If you see *"No dev copy of 'so_orchestrator' yet"*, Step 1 didn't finish. Deploy again, then rerun the cell.
+# MAGIC **If it fails or shows "No dev copy of 'so_orchestrator' yet":** deploy (Deployments panel → target **`dev`** →
+# MAGIC **Deploy**), then run `run_job("so_orchestrator")` in a new cell to run it again.
 # MAGIC
 # MAGIC **Why it matters:** this is the full morning run, the same one prod will do at 6am: first the pipeline turns the
 # MAGIC register files into clean tables, then the KPI job flags stores that are behind. One click runs everything in
@@ -48,7 +46,7 @@
 
 # COMMAND ----------
 
-run_job("so_orchestrator")
+wait_for_job("so_orchestrator")
 
 # COMMAND ----------
 

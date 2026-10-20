@@ -188,6 +188,23 @@ rule_checks()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ## 3.5 · Start the morning run, in the background
+# MAGIC
+# MAGIC Your bundle now has everything for Store Ops' morning run: the pipeline, then the KPI job. Start it now. It takes
+# MAGIC several minutes, and it keeps running while you finish this module and move on. In module 4 you'll check the
+# MAGIC result.
+# MAGIC
+# MAGIC Run the cell. ✅ You should see a run link and *"Started"*. You don't need to wait for it.
+# MAGIC
+# MAGIC Used the **Catch up** cell below? Run it first, deploy `dev`, then come back and run this cell.
+
+# COMMAND ----------
+
+start_job("so_orchestrator")
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## Done with module 3
 # MAGIC
 # MAGIC **Next:** open **`04_Run_Your_Own_Copy`**.

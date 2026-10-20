@@ -193,6 +193,15 @@ dev data in dev, prod data in prod."
 
 **CLICK** 3.4: Deploy, **RUN** `rule_checks()`. **CHECK** all ✅.
 
+**RUN** 3.5, `start_job("so_orchestrator")`. **SAY** "This kicks off the whole morning run: the pipeline, then the KPI
+job. On Free Edition it takes about 10 to 12 minutes, mostly compute starting up, so we start it now and let it run
+while we wrap up." **CHECK** everyone sees *"Started"*. Anyone who used Catch up: catch up, deploy, then run 3.5.
+
+**Fill the time (about 5 minutes) before module 4**, while the runs go:
+- Recap module 3 on the four-piece table: one bundle, one deploy, promoted together.
+- **ASK** "Which of your own pipelines would you move into a bundle first, and what depends on it?"
+- **CLICK** your own run link and show the pipeline graph filling in, bronze → silver → gold.
+
 **IF** the pipeline won't validate: **RUN** the **Catch up** cell (both lines), then redeploy.
 
 ### While Genie Code builds the pipeline (3.1)
@@ -243,15 +252,16 @@ and keep going. They can look at Genie Code's version later.
 **SAY** "Many team templates deploy every target in production mode, so there's no safe place to test your own copy.
 The `dev` target is that place: your name on everything, your own schema, schedules paused."
 
-**CLICK** 4.1, Step 1: Deployments panel → `dev` → **Deploy**, and wait for it to finish. **SAY** "The cell runs your
-deployed copy, so always deploy first."
-
-**RUN** Step 2, `run_job("so_orchestrator")`. **WAIT** 3 to 5 minutes. While it runs:
+**RUN** 4.1, `wait_for_job("so_orchestrator")`. **SAY** "This picks up the run you started in module 3. If it's done,
+you'll see the result now; if not, it waits and shows progress." **WAIT** whatever is left of the run. While it runs:
 - **CLICK** the run link. Show the two tasks: the pipeline first, then the KPI job.
 - **SAY** "This is the same morning run prod does at 6am, in the right order, because the order is in the
   orchestrator."
 - **CLICK** into the pipeline run and show the graph: bronze → silver → gold, with row counts and expectation
   results.
+
+**IF** someone's run failed or never started: deploy `dev`, then `run_job("so_orchestrator")` in a new cell. It takes
+about 10 to 12 minutes on Free Edition, so pair them with a neighbor for 4.2 and 4.3 meanwhile.
 
 **CHECK** `so_orchestrator: SUCCESS`.
 
@@ -467,6 +477,6 @@ It removes the teammate's job from `main` (through a pull request, since `main` 
 | `dashboard ... has been modified remotely` | The deployed dev dashboard was edited directly (in the UI or by Genie Code), not the file. Delete any new `resources/*dashboard.yml` Genie Code added. The Deployments panel can't override this; from a terminal, `databricks bundle deploy -t dev --force` in a clone of the same branch overwrites the edit. Otherwise use the backup screen |
 | Deploy fails on the Genie space | The tables don't exist yet. It only joins in module 4, after the orchestrator runs |
 | `rule_checks()` says it couldn't run the checks | Rerun the cell once (the first run installs pytest) |
-| Serverless is slow | Keep talking: each slow step above has filler ideas. Use the backup recording for module 4 |
+| Serverless is slow | The orchestrator starts in 3.5 so it overlaps with the wrap-up. Keep talking: each slow step has filler ideas. Use the backup recording for module 4 |
 | An attendee's workspace is broken | Pair them with a neighbor, or have them watch your screen |
 | You need to rehearse again | Run `devops/instructor/reset_demo` in your demo workspace |

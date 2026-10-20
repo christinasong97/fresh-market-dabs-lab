@@ -67,28 +67,76 @@ def dev_schema():
     return f"dev_{short}_store_ops"
 
 
-def run_job(key, quiet=False):
-    """Run one of your dev jobs and wait. Returns the finished run."""
-    job = dev_job(key)
-    if job is None:
-        print(f"❌ No dev copy of '{key}' yet. Deploy the bundle (Deployments panel → target dev → Deploy) first.")
-        return None
-    run_id = w.jobs.run_now(job.job_id).run_id
-    if not quiet:
-        link(f"/jobs/{job.job_id}/runs/{run_id}", f"▶ {job.settings.name} (open the run)")
+def _no_dev_copy(key):
+    print(f"❌ No dev copy of '{key}' yet. Deploy the bundle (Deployments panel → target dev → Deploy) first.")
+
+
+def _wait(job, run_id, quiet=False, every=None):
+    """Wait for a run to finish. With `every`, print progress every `every` seconds."""
+    started, last = time.time(), 0.0
     while True:
         run = w.jobs.get_run(run_id)
         state = run.state.life_cycle_state.value
         if state in ("TERMINATED", "SKIPPED", "INTERNAL_ERROR"):
             break
+        if every and time.time() - last >= every:
+            last = time.time()
+            tasks = ", ".join(
+                f"{t.task_key}: {t.state.life_cycle_state.value}" for t in run.tasks or [] if t.state and t.state.life_cycle_state
+            )
+            print(f"   ... {int((time.time() - started) / 60)} min: {tasks}")
         time.sleep(10)
     result = run.state.result_state.value if run.state.result_state else state
     if not quiet:
-        print(f"{'✅' if result == 'SUCCESS' else '❌'} {key}: {result}")
+        print(f"{'✅' if result == 'SUCCESS' else '❌'} {job.settings.name.split('_dev_')[-1]}: {result}")
         for task in run.tasks or []:
             ts = task.state.result_state.value if task.state and task.state.result_state else task.state.life_cycle_state.value
             print(f"   - {task.task_key}: {ts}")
+    return run
+
+
+def run_job(key, quiet=False):
+    """Run one of your dev jobs and wait. Returns the finished run."""
+    job = dev_job(key)
+    if job is None:
+        _no_dev_copy(key)
+        return None
+    run_id = w.jobs.run_now(job.job_id).run_id
+    if not quiet:
+        link(f"/jobs/{job.job_id}/runs/{run_id}", f"▶ {job.settings.name} (open the run)")
+    run = _wait(job, run_id, quiet=quiet, every=None if quiet else 60)
     return run if quiet else None
+
+
+def start_job(key):
+    """Start one of your dev jobs and return right away. It keeps running while you move on."""
+    job = dev_job(key)
+    if job is None:
+        _no_dev_copy(key)
+        return
+    run_id = w.jobs.run_now(job.job_id).run_id
+    link(f"/jobs/{job.job_id}/runs/{run_id}", f"▶ {job.settings.name} (open the run)")
+    print("✅ Started. It keeps running in the background; you'll pick it up in module 4.")
+
+
+def wait_for_job(key):
+    """Wait for the latest run of one of your dev jobs (starting one if there isn't any), then show the result."""
+    job = dev_job(key)
+    if job is None:
+        _no_dev_copy(key)
+        return
+    latest = next(iter(w.jobs.list_runs(job_id=job.job_id, limit=1)), None)
+    if latest is None:
+        print("No run yet, so starting one now.")
+        run_id = w.jobs.run_now(job.job_id).run_id
+    else:
+        run_id = latest.run_id
+        if latest.state and latest.state.life_cycle_state.value in ("TERMINATED", "SKIPPED", "INTERNAL_ERROR"):
+            print("Your run already finished.")
+        else:
+            print("Your run is still going. Waiting for it (progress every minute)...")
+    link(f"/jobs/{job.job_id}/runs/{run_id}", f"▶ {job.settings.name} (open the run)")
+    _wait(job, run_id, every=60)
 
 
 def rule_checks():
