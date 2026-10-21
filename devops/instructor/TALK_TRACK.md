@@ -103,7 +103,7 @@ numbered names, Jane gets the failure emails, hard-coded INT catalog, reads raw 
 2. **Deployments** (rocket) → **Bundle resources** → **Add** → **Add existing job**
 3. Choose `Job_02_PL_Store_KPI_Alerts` → **(Advanced) Don't update** → **Add**
 
-**SAY** "Pick **Don't update**. The bundle gets its own copy; the original job is untouched. The other two options
+**SAY** "Pick **Don't update**. The bundle gets its own copy of the job and its notebook; the original job is untouched. The other two options
 link the original to your bundle, so your deploys would overwrite it."
 
 **SAY** "Option B does the same with one cell. Use whichever you like; the rest of the lab works with both."
@@ -123,8 +123,6 @@ workspace instructions. You'll see them in module 2."
 **SAY** "It's valid YAML, it deploys, and it breaks five team rules. Validate checks the syntax; these checks enforce
 the rules DevOps wrote. They're the same test files CI runs on every pull request, and they take a few seconds."
 
-**IF** an attendee sees four failures instead of five: they used Option A, so the notebook isn't in `src/` yet. That's
-fine.
 
 ## Module 2 · The guardrails DevOps owns (10 min)
 

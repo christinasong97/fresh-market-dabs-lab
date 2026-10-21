@@ -79,16 +79,16 @@ link(f"/jobs/{legacy.job_id}", "Open the job in the UI")
 # MAGIC 5. In the job dropdown, choose **`Job_02_PL_Store_KPI_Alerts`**.
 # MAGIC 6. Choose **(Advanced) Don't update**. Your bundle gets its own copy, and the original hand-built job stays
 # MAGIC    untouched. (The other two options link the original job to your bundle, so your deploys would overwrite it.)
-# MAGIC 7. Click **Add**. Databricks writes the job's YAML file into your bundle.
+# MAGIC 7. Click **Add**. Databricks writes the job's YAML file into `resources/` and copies its notebook into
+# MAGIC    `src/job_02_pl_store_kpi_alerts/`.
 # MAGIC 8. Skip the next cell and go to **1.3**.
 # MAGIC
 # MAGIC ### Option B · Run the cell
-# MAGIC Run the next cell. It does the same thing with code, and also copies the job's notebook into `src/`, so the
-# MAGIC bundle carries its own code. It writes:
+# MAGIC Run the next cell. It does the same thing with code. It writes:
 # MAGIC - `resources/job_02_pl_store_kpi_alerts.job.yml`: the job's YAML
 # MAGIC - `src/Job_02_Store_KPI_Alerts.py`: the notebook the job runs
 # MAGIC
-# MAGIC With Option A, the notebook stays in `/Workspace/Shared` for now. Genie Code moves it into the bundle in module 2.
+# MAGIC Either way, the bundle now has its own copy of the job's YAML and its notebook.
 
 # COMMAND ----------
 

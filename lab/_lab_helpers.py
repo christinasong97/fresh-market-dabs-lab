@@ -227,7 +227,9 @@ def remove_repo_file(rel):
 
 
 LEGACY_JOB_NAME = "Job_02_PL_Store_KPI_Alerts"
-LEGACY_NOTEBOOK_COPY = "src/Job_02_Store_KPI_Alerts.py"
+# Option B copies the notebook to src/Job_02_Store_KPI_Alerts.py. Add existing job copies it into its own folder,
+# like src/job_02_pl_store_kpi_alerts/Job_02_Store_KPI_Alerts. In a Git folder a notebook has no .py extension.
+LEGACY_NOTEBOOK_NAMES = ("Job_02_Store_KPI_Alerts", "Job_02_Store_KPI_Alerts.py")
 
 
 def _defines_legacy_job(path):
@@ -248,8 +250,8 @@ def imported_job_files():
             path = os.path.join(folder, name)
             if name.endswith((".yml", ".yaml")) and _defines_legacy_job(path):
                 found.append(os.path.relpath(path, REPO_ROOT))
-    if _exists(LEGACY_NOTEBOOK_COPY):
-        found.append(LEGACY_NOTEBOOK_COPY)
+            elif name in LEGACY_NOTEBOOK_NAMES and os.path.relpath(folder, REPO_ROOT).split(os.sep)[0] == "src":
+                found.append(os.path.relpath(path, REPO_ROOT))
     return sorted(found)
 
 
@@ -259,6 +261,12 @@ def remove_imported_job():
     for rel in files:
         remove_repo_file(rel)
         print(f"🗑  removed {rel}")
+    # Add existing job puts the notebook in its own folder under src/. Remove that folder too once it's empty.
+    for folder in sorted({os.path.dirname(rel) for rel in files}, reverse=True):
+        path = os.path.join(REPO_ROOT, folder)
+        if folder.startswith("src/") and os.path.isdir(path) and not os.listdir(path):
+            w.workspace.delete(path)
+            print(f"🗑  removed {folder}/")
     print("\nOld Job_02 files removed." if files else "No old Job_02 files left. Nothing to remove.")
 
 
