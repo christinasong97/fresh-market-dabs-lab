@@ -23,9 +23,8 @@ You do everything in your **Databricks workspace**. You never need to open or ch
    `05_Ship_It`. Each one has numbered steps, the Genie Code prompts to paste, and a "✅ you should see"
    after each step.
 
-**Instructors:** the talk track is [devops/instructor/TALK_TRACK.md](devops/instructor/TALK_TRACK.md), the pre-work
-email is [devops/instructor/PRE_WORK_EMAIL.md](devops/instructor/PRE_WORK_EMAIL.md), and
-`devops/instructor/reset_demo` resets a demo workspace between rehearsals.
+**Instructors:** `devops/instructor/reset_demo` resets a demo workspace between rehearsals, and
+`devops/instructor/reset_github_demo.sh` resets the module 5 pull request demo on GitHub.
 
 ---
 
@@ -78,7 +77,7 @@ tests/
 devops/
   checks/run_rule_checks.py        # Runs tests/bundle inside the workspace
   lab_setup/00_lab_setup.py        # Admin-only, run once per workspace: everything outside the bundle
-  vocareum/                        # Vocareum course config and packaging steps
+  instructor/                      # Instructor reset tools (workspace and GitHub demo)
 lab/                               # Module notebooks, shared helpers, and solutions/ for catching up
 .github/                           # CI, deploy, CODEOWNERS
 .assistant_workspace_instructions.md  # Genie Code instructions (the team's rules)

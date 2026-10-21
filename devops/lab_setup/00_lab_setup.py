@@ -15,8 +15,8 @@
 # MAGIC Everything else (schemas, pipeline, jobs, dashboard, Genie space) is created by attendees when they
 # MAGIC deploy the bundle.
 # MAGIC
-# MAGIC **Vocareum:** register this notebook as the workspace setup notebook.
-# MAGIC **Free Edition:** open it from your Git folder and click **Run all**.
+# MAGIC Attendees don't open this directly: `00_START_HERE` runs it. To run it yourself, open it from your Git folder
+# MAGIC and click **Run all**.
 
 # COMMAND ----------
 
@@ -53,7 +53,7 @@ def grant(securable, privileges, principal):
 def create_catalog(catalog, comment):
     """Create a catalog where the workspace keeps its other catalogs.
 
-    Most workspaces (Vocareum, Free Edition) pick the storage automatically. Some shared metastores, like
+    Most workspaces, like Free Edition, pick the storage automatically. Some shared metastores, like
     FEVM's, don't; there we reuse the storage of the workspace's default catalog, so nobody has to supply it.
     """
     if storage_root:

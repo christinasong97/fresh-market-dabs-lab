@@ -2,8 +2,7 @@
 # MAGIC %md
 # MAGIC # Lab admin setup: publish Genie Code workspace instructions
 # MAGIC
-# MAGIC Run as a **workspace admin** (in Vocareum: from the workspace setup notebook, so every
-# MAGIC provisioned workspace gets it). Copies the repo's `.assistant_workspace_instructions.md` to
+# MAGIC Run as a **workspace admin** (`00_lab_setup` runs it for you). Copies the repo's `.assistant_workspace_instructions.md` to
 # MAGIC `/Workspace/.assistant_workspace_instructions.md`, which Genie Code reads for every user.
 # MAGIC An existing file is backed up first.
 
