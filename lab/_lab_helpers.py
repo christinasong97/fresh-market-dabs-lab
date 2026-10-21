@@ -261,12 +261,20 @@ def remove_imported_job():
     for rel in files:
         remove_repo_file(rel)
         print(f"🗑  removed {rel}")
-    # Add existing job puts the notebook in its own folder under src/. Remove that folder too once it's empty.
+    # Add existing job puts the notebook in its own folder under src/. Remove that folder too if nothing else is in it.
     for folder in sorted({os.path.dirname(rel) for rel in files}, reverse=True):
+        if not folder.startswith("src/"):
+            continue
         path = os.path.join(REPO_ROOT, folder)
-        if folder.startswith("src/") and os.path.isdir(path) and not os.listdir(path):
-            w.workspace.delete(path)
-            print(f"🗑  removed {folder}/")
+        try:
+            left = [os.path.basename(e.path) for e in w.workspace.list(path)]
+            if left:
+                print(f"ℹ️  kept {folder}/ because it still has: {', '.join(left)}")
+            else:
+                w.workspace.delete(path)
+                print(f"🗑  removed {folder}/")
+        except Exception as e:  # noqa: BLE001 - the folder is only clean-up, never block on it
+            print(f"ℹ️  couldn't remove {folder}/ ({str(e).splitlines()[0][:80]}). It's safe to delete it yourself.")
     print("\nOld Job_02 files removed." if files else "No old Job_02 files left. Nothing to remove.")
 
 
