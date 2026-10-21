@@ -17,30 +17,7 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 2.1 · Read the rules Genie Code follows
-# MAGIC
-# MAGIC Genie Code's team rules are a plain Markdown file. It lives in two places:
-# MAGIC
-# MAGIC | Where | What it is |
-# MAGIC |---|---|
-# MAGIC | **`.assistant_workspace_instructions.md`**, top of your Git folder | The source. DevOps changes it by pull request. |
-# MAGIC | **`/Workspace/.assistant_workspace_instructions.md`** | The copy Genie Code reads. `00_START_HERE` published it. |
-# MAGIC
-# MAGIC Only workspace administrators can add or edit instructions that apply to all users across the workspace.
-# MAGIC
-# MAGIC Run the cell to read the rules and check the published copy matches the one in your Git folder.
-
-# COMMAND ----------
-
-show_file(".assistant_workspace_instructions.md")
-published = w.workspace.download("/Workspace/.assistant_workspace_instructions.md").read().decode()
-same = published.strip() == read_repo_file(".assistant_workspace_instructions.md").strip()
-print("✅ The published copy matches your Git folder." if same else "⚠️  The published copy is different. Rerun 00_START_HERE.")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## 2.2 · Ask Genie Code to restructure the job
+# MAGIC ## 2.1 · Ask Genie Code to restructure the job
 # MAGIC
 # MAGIC Open **Genie Code** (agent mode) from your Git folder in Databricks and paste:
 # MAGIC
@@ -59,12 +36,36 @@ print("✅ The published copy matches your Git folder." if same else "⚠️  Th
 # MAGIC **This takes about 5 minutes.** Genie Code works in several steps: it reads the team's rules, plans the files,
 # MAGIC writes them, and checks its own work.
 # MAGIC
-# MAGIC **While it works:** Genie Code isn't guessing your conventions; it's reading them. Watch for the name pattern,
-# MAGIC the `so_` prefix, `${var.notification_email}`, tags, and no hard-coded catalog.
+# MAGIC **While it works, go on to 2.2** and read the rules it's following. Genie Code isn't guessing your conventions;
+# MAGIC it's reading them. Watch for the name pattern, the `so_` prefix, `${var.notification_email}`, tags, and no
+# MAGIC hard-coded catalog.
 # MAGIC
 # MAGIC **If it asks you to approve an action, or says an action was denied:** that's a safety guardrail, not an error.
 # MAGIC Genie Code can't run risky actions, like deleting files or changing things outside your Git folder, without
 # MAGIC you. Approve what you expect, and it carries on.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 2.2 · While it works: read the rules Genie Code follows
+# MAGIC
+# MAGIC Genie Code's team rules are a plain Markdown file. It lives in two places:
+# MAGIC
+# MAGIC | Where | What it is |
+# MAGIC |---|---|
+# MAGIC | **`.assistant_workspace_instructions.md`**, top of your Git folder | The source. DevOps changes it by pull request. |
+# MAGIC | **`/Workspace/.assistant_workspace_instructions.md`** | The copy Genie Code reads. `00_START_HERE` published it. |
+# MAGIC
+# MAGIC Only workspace administrators can add or edit instructions that apply to all users across the workspace.
+# MAGIC
+# MAGIC Run the cell to read the rules and check the published copy matches the one in your Git folder.
+
+# COMMAND ----------
+
+show_file(".assistant_workspace_instructions.md")
+published = w.workspace.download("/Workspace/.assistant_workspace_instructions.md").read().decode()
+same = published.strip() == read_repo_file(".assistant_workspace_instructions.md").strip()
+print("✅ The published copy matches your Git folder." if same else "⚠️  The published copy is different. Rerun 00_START_HERE.")
 
 # COMMAND ----------
 

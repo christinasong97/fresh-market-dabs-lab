@@ -132,12 +132,15 @@ fine.
 
 **SAY** "DevOps owns the targets, the rules, and the checks. You own your files and your dev copy."
 
-**RUN** 2.1. **CLICK** the two-row table.
+**RUN** 2.1: paste the prompt into Genie Code (agent mode). **WAIT** about 5 minutes. **SAY** "While it works, let's
+read the rules it's following."
+
+**RUN** 2.2 (while Genie Code works). **CLICK** the two-row table.
 
 **SAY** "The team's rules are one Markdown file in the repo. DevOps changes it by pull request, and setup publishes
 it to the workspace, where Genie Code reads it for everyone. Only workspace admins can edit the published copy."
 
-**RUN** 2.2: paste the prompt into Genie Code (agent mode). **WAIT** about 5 minutes. While it works:
+Then, while Genie Code finishes:
 - **SAY** "Genie Code isn't guessing our conventions. It's reading them. Watch for the `so_` prefix, the naming
   pattern, `${var.notification_email}`, the tags."
 - **CLICK** Genie Code's panel and narrate its plan as it goes.
