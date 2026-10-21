@@ -185,7 +185,8 @@ is in `depends_on`, not in job names."
 
 **RUN** 3.4, `start_job("so_orchestrator")`. **SAY** "This kicks off the whole morning run: the pipeline, then the KPI
 job. On Free Edition it takes about 10 to 12 minutes, mostly compute starting up, so we start it now and look at the dashboard
-while it runs." **CHECK** everyone sees *"Started"*. Anyone who used Catch up: catch up, deploy, then run 3.4.
+while it runs. It also starts the SQL warehouse,
+so it's warm for the dashboard in module 4." **CHECK** everyone sees *"Started"*. Anyone who used Catch up: catch up, deploy, then run 3.4.
 
 **CLICK** 3.5, while the runs go: the dashboard sketch. **SAY** "This is what everything in this module feeds: the Store Performance
 dashboard district managers open each morning. It's already in the bundle. The run you just started is building
@@ -271,7 +272,7 @@ about 10 to 12 minutes on Free Edition, so pair them with a neighbor for 4.2 and
 **SAY** "Those are the silver rules at work: a register glitch never reaches a district manager's report. And this
 is the list Store Ops follows up on."
 
-**RUN** 4.3. **CLICK** the dashboard link. **SAY** "This is the dashboard from 3.3, now with our data. It's what Store
+**RUN** 4.3. It warms up the SQL warehouse first (seconds if it's already on). **CLICK** the dashboard link. **SAY** "This is the dashboard from 3.3, now with our data. It's what Store
 Ops actually opens each morning, and it came from the same deploy as the pipeline and the job."
 
 **4.4 · Change the dashboard (about 4 min).** **RUN** the Genie Code prompt to add a "net sales by store format" bar
@@ -494,5 +495,6 @@ It removes the teammate's job from `main` (through a pull request, since `main` 
 | Deploy fails on the Genie space | The tables don't exist yet. It only joins in module 4, after the orchestrator runs |
 | `rule_checks()` says it couldn't run the checks | Rerun the cell once (the first run installs pytest) |
 | Serverless is slow | The orchestrator starts in 3.4 so it overlaps with the dashboard walkthrough in 3.5. Keep talking: each slow step has filler ideas. Use the backup recording for module 4 |
+| The dashboard is slow to load | The 2X-Small SQL warehouse was off. 3.4 and 4.1 start it in the background, and 4.3 warms it before the link; rerun the 4.3 cell, then reload the dashboard |
 | An attendee's workspace is broken | Pair them with a neighbor, or have them watch your screen |
 | You need to rehearse again | Run `devops/instructor/reset_demo` in your demo workspace |

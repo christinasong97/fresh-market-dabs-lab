@@ -108,6 +108,48 @@ def run_job(key, quiet=False):
     return run if quiet else None
 
 
+def _warehouse():
+    """The SQL warehouse the bundle's dashboard uses (warehouse_name in common.vars.yml)."""
+    variables = yaml.safe_load(open(f"{REPO_ROOT}/resources/variables/common.vars.yml"))["variables"]
+    name = variables["warehouse_name"]["default"]
+    return next((x for x in w.warehouses.list() if x.name == name), None)
+
+
+def start_warehouse():
+    """Start the dashboard's SQL warehouse without waiting, so it's warm by the time you need it."""
+    wh = _warehouse()
+    if wh is None:
+        return
+    if wh.state and wh.state.value in ("RUNNING", "STARTING"):
+        print(f"🔥 SQL warehouse '{wh.name}' is already on.")
+        return
+    w.warehouses.start(wh.id)
+    print(f"🔥 Starting SQL warehouse '{wh.name}' in the background, so your dashboard opens fast later.")
+
+
+def warm_warehouse():
+    """Make sure the SQL warehouse is running and has read your tables, so the dashboard loads quickly."""
+    wh = _warehouse()
+    if wh is None:
+        print("Couldn't find the SQL warehouse. The dashboard will start it when you open it.")
+        return
+    schema = f"`{CATALOG}`.`{dev_schema()}`"
+    sql = " UNION ALL ".join(
+        f"SELECT '{t}', COUNT(*) FROM {schema}.{t}"
+        for t in ("gold_daily_store_sales", "gold_department_sales", "gold_store_alerts")
+    )
+    print(f"Warming up SQL warehouse '{wh.name}' (up to a few minutes if it was off)...")
+    started = time.time()
+    resp = w.statement_execution.execute_statement(warehouse_id=wh.id, statement=sql, wait_timeout="50s")
+    while resp.status.state.value in ("PENDING", "RUNNING") and time.time() - started < 600:
+        time.sleep(5)
+        resp = w.statement_execution.get_statement(resp.statement_id)
+    if resp.status.state.value == "SUCCEEDED":
+        print(f"✅ SQL warehouse is warm ({int(time.time() - started)}s). Your dashboard should load quickly now.")
+    else:
+        print(f"⚠️  Warm-up didn't finish ({resp.status.state.value}). The dashboard may take a minute to load.")
+
+
 def start_job(key):
     """Start one of your dev jobs and return right away. It keeps running while you move on."""
     job = dev_job(key)
@@ -117,6 +159,7 @@ def start_job(key):
     run_id = w.jobs.run_now(job.job_id).run_id
     link(f"/jobs/{job.job_id}/runs/{run_id}", f"▶ {job.settings.name} (open the run)")
     print("✅ Started. It keeps running in the background; you'll pick it up in module 4.")
+    start_warehouse()
 
 
 def wait_for_job(key):
@@ -125,6 +168,7 @@ def wait_for_job(key):
     if job is None:
         _no_dev_copy(key)
         return
+    start_warehouse()  # warms up while the run finishes, so the dashboard is ready right after
     latest = next(iter(w.jobs.list_runs(job_id=job.job_id, limit=1)), None)
     if latest is None:
         print("No run yet, so starting one now.")

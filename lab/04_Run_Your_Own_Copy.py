@@ -83,7 +83,8 @@ display(spark.sql(f"SELECT * FROM `{CATALOG}`.`{schema}`.gold_store_alerts ORDER
 # MAGIC %md
 # MAGIC ## 4.3 · Open your dashboard
 # MAGIC
-# MAGIC This is the dashboard from module 3 (3.5), now showing your data. Run the cell and open the link.
+# MAGIC This is the dashboard from module 3 (3.5), now showing your data. Run the cell and open the link. The cell first
+# MAGIC warms up the SQL warehouse the dashboard runs on, so the charts load quickly.
 # MAGIC
 # MAGIC ✅ You should see Net Sales, the weekly sales and department charts, and the Store Review List with the stores
 # MAGIC furthest behind target at the top.
@@ -93,6 +94,7 @@ display(spark.sql(f"SELECT * FROM `{CATALOG}`.`{schema}`.gold_store_alerts ORDER
 
 # COMMAND ----------
 
+warm_warehouse()
 dash = find_dev_dashboard()
 if dash:
     link(f"/dashboardsv3/{dash['id']}/published", f"📊 {dash['name']}")
