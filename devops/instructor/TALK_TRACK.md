@@ -181,24 +181,24 @@ minutes. See **While Genie Code builds the pipeline** below.
 resource key, not by an ID. Every environment has different IDs; this line works in all of them. And the run order
 is in `depends_on`, not in job names."
 
-**CLICK** 3.3, the dashboard sketch. **SAY** "This is what everything in this module feeds: the Store Performance
-dashboard district managers open each morning. It's already in the bundle. The tables it reads don't exist yet; the
-orchestrator builds them in module 4, and then you'll open it with your own data."
+**CLICK** 3.3: Deploy, **RUN** `rule_checks()`. **CHECK** all ✅.
+
+**RUN** 3.4, `start_job("so_orchestrator")`. **SAY** "This kicks off the whole morning run: the pipeline, then the KPI
+job. On Free Edition it takes about 10 to 12 minutes, mostly compute starting up, so we start it now and look at the dashboard
+while it runs." **CHECK** everyone sees *"Started"*. Anyone who used Catch up: catch up, deploy, then run 3.4.
+
+**CLICK** 3.5, while the runs go: the dashboard sketch. **SAY** "This is what everything in this module feeds: the Store Performance
+dashboard district managers open each morning. It's already in the bundle. The run you just started is building
+the tables it reads; in module 4 you'll open it with your own data."
 
 **CLICK** the table that maps each chart to its table and who builds it. **ASK** "Which of these breaks if the
 pipeline doesn't run?" (All of them, which is why they deploy together.)
 
-**RUN** the 3.3 cell. **SAY** "The dashboard has the same problem the job had: a hard-coded catalog would pin it to
+**RUN** the 3.5 cell. **SAY** "The dashboard has the same problem the job had: a hard-coded catalog would pin it to
 INT. Its queries use bare table names, and two lines in the YAML fill in this target's catalog and schema. Same file,
 dev data in dev, prod data in prod."
 
-**CLICK** 3.4: Deploy, **RUN** `rule_checks()`. **CHECK** all ✅.
-
-**RUN** 3.5, `start_job("so_orchestrator")`. **SAY** "This kicks off the whole morning run: the pipeline, then the KPI
-job. On Free Edition it takes about 10 to 12 minutes, mostly compute starting up, so we start it now and let it run
-while we wrap up." **CHECK** everyone sees *"Started"*. Anyone who used Catch up: catch up, deploy, then run 3.5.
-
-**Fill the time (about 5 minutes) before module 4**, while the runs go:
+**If there's still time before module 4:**
 - Recap module 3 on the four-piece table: one bundle, one deploy, promoted together.
 - **ASK** "Which of your own pipelines would you move into a bundle first, and what depends on it?"
 - **CLICK** your own run link and show the pipeline graph filling in, bronze → silver → gold.
@@ -493,6 +493,6 @@ It removes the teammate's job from `main` (through a pull request, since `main` 
 | `dashboard ... has been modified remotely` | The deployed dev dashboard was edited directly (in the UI or by Genie Code), not the file. Delete any new `resources/*dashboard.yml` Genie Code added. The Deployments panel can't override this; from a terminal, `databricks bundle deploy -t dev --force` in a clone of the same branch overwrites the edit. Otherwise use the backup screen |
 | Deploy fails on the Genie space | The tables don't exist yet. It only joins in module 4, after the orchestrator runs |
 | `rule_checks()` says it couldn't run the checks | Rerun the cell once (the first run installs pytest) |
-| Serverless is slow | The orchestrator starts in 3.5 so it overlaps with the wrap-up. Keep talking: each slow step has filler ideas. Use the backup recording for module 4 |
+| Serverless is slow | The orchestrator starts in 3.4 so it overlaps with the dashboard walkthrough in 3.5. Keep talking: each slow step has filler ideas. Use the backup recording for module 4 |
 | An attendee's workspace is broken | Pair them with a neighbor, or have them watch your screen |
 | You need to rehearse again | Run `devops/instructor/reset_demo` in your demo workspace |

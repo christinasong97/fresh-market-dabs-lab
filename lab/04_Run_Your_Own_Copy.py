@@ -29,10 +29,10 @@
 # MAGIC %md
 # MAGIC ## 4.1 · Check the morning run
 # MAGIC
-# MAGIC You started the orchestrator at the end of module 3 (3.5). It runs the pipeline, then the KPI job.
+# MAGIC You started the orchestrator at the end of module 3 (3.4). It runs the pipeline, then the KPI job.
 # MAGIC
 # MAGIC **Run the cell.** If your run has finished, it shows the result right away. If it's still going, it waits and
-# MAGIC prints progress every minute. Didn't start it in 3.5? The cell starts it now; it takes several minutes. Click the
+# MAGIC prints progress every minute. Didn't start it in 3.4? The cell starts it now; it takes several minutes. Click the
 # MAGIC run link to watch it.
 # MAGIC
 # MAGIC ✅ You should see `so_orchestrator: SUCCESS`, with `refresh_sales` and `publish_store_kpis` both succeeding.
@@ -83,7 +83,7 @@ display(spark.sql(f"SELECT * FROM `{CATALOG}`.`{schema}`.gold_store_alerts ORDER
 # MAGIC %md
 # MAGIC ## 4.3 · Open your dashboard
 # MAGIC
-# MAGIC This is the dashboard from module 3 (3.3), now showing your data. Run the cell and open the link.
+# MAGIC This is the dashboard from module 3 (3.5), now showing your data. Run the cell and open the link.
 # MAGIC
 # MAGIC ✅ You should see Net Sales, the weekly sales and department charts, and the Store Review List with the stores
 # MAGIC furthest behind target at the top.
@@ -104,7 +104,7 @@ else:
 # MAGIC %md
 # MAGIC ## 4.4 · Change the dashboard and redeploy
 # MAGIC
-# MAGIC In 3.3 you saw that the dashboard is a file in your bundle, `src/store_ops/dashboards/store_performance.lvdash.json`.
+# MAGIC In 3.5 you saw that the dashboard is a file in your bundle, `src/store_ops/dashboards/store_performance.lvdash.json`.
 # MAGIC Now that it shows real data, change it the way you'd change any code:
 # MAGIC
 # MAGIC 1. **Ask Genie Code:**

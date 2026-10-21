@@ -124,10 +124,39 @@ show_file("resources/jobs/store_ops/orchestrator.job.yml")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 3.3 · The dashboard you're building toward
+# MAGIC ## 3.3 · Validate, then deploy
 # MAGIC
-# MAGIC Everything in this module feeds one screen: the **Store Performance** dashboard that district managers open each
-# MAGIC morning. It's already in your bundle (it came with the starter repo), and it looks like this:
+# MAGIC Deployments panel: target **`dev`** → **Validate** → **Deploy**. Then run the checks.
+
+# COMMAND ----------
+
+rule_checks()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 3.4 · Start the morning run, in the background
+# MAGIC
+# MAGIC Your bundle now has everything for Store Ops' morning run: the pipeline, then the KPI job. Start it now. It takes
+# MAGIC several minutes, and it keeps running while you look at the dashboard in 3.5 and move on. In module 4 you'll
+# MAGIC check the result.
+# MAGIC
+# MAGIC Run the cell. ✅ You should see a run link and *"Started"*. You don't need to wait for it.
+# MAGIC
+# MAGIC Used the **Catch up** cell below? Run it first, deploy `dev`, then come back and run this cell.
+
+# COMMAND ----------
+
+start_job("so_orchestrator")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 3.5 · While it runs: the dashboard you're building toward
+# MAGIC
+# MAGIC Your morning run is filling the tables now. Everything it builds feeds one screen: the **Store Performance**
+# MAGIC dashboard that district managers open each morning. It's already in your bundle (it came with the starter repo),
+# MAGIC and it looks like this:
 # MAGIC
 # MAGIC ```
 # MAGIC  Store Performance
@@ -147,8 +176,8 @@ show_file("resources/jobs/store_ops/orchestrator.job.yml")
 # MAGIC | Net Sales by Department | `gold_department_sales` | Your pipeline (3.1) |
 # MAGIC | Stores Flagged for Review, Store Review List | `gold_store_alerts` | Your KPI job (module 2) |
 # MAGIC
-# MAGIC None of these tables exist yet, so the dashboard has nothing to show. In module 4 the orchestrator builds them,
-# MAGIC and you open the dashboard with your own data.
+# MAGIC These tables don't exist until your run finishes, so the dashboard has nothing to show yet. In module 4 you open
+# MAGIC it with your own data.
 # MAGIC
 # MAGIC **How it's stored in the bundle.** A dashboard is two files:
 # MAGIC
@@ -173,34 +202,6 @@ show_file("resources/jobs/store_ops/orchestrator.job.yml")
 # COMMAND ----------
 
 show_file("resources/dashboards/store_ops/so_store_performance.dashboard.yml")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## 3.4 · Validate, then deploy
-# MAGIC
-# MAGIC Deployments panel: target **`dev`** → **Validate** → **Deploy**. Then run the checks.
-
-# COMMAND ----------
-
-rule_checks()
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## 3.5 · Start the morning run, in the background
-# MAGIC
-# MAGIC Your bundle now has everything for Store Ops' morning run: the pipeline, then the KPI job. Start it now. It takes
-# MAGIC several minutes, and it keeps running while you finish this module and move on. In module 4 you'll check the
-# MAGIC result.
-# MAGIC
-# MAGIC Run the cell. ✅ You should see a run link and *"Started"*. You don't need to wait for it.
-# MAGIC
-# MAGIC Used the **Catch up** cell below? Run it first, deploy `dev`, then come back and run this cell.
-
-# COMMAND ----------
-
-start_job("so_orchestrator")
 
 # COMMAND ----------
 
