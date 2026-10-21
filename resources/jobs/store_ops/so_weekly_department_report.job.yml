@@ -1,0 +1,22 @@
+# Weekly department sales report for merchandising.
+resources:
+  jobs:
+    so_weekly_department_report:
+      name: ${bundle.name}_${var.environment}_so_weekly_department_report
+      description: Week-over-week net sales by department.
+      tags:
+        domain: store_ops
+        cost_center: ${var.cost_center}
+      email_notifications:
+        on_failure:
+          - ${var.notification_email}
+      schedule:
+        quartz_cron_expression: "0 0 7 ? * MON"
+        timezone_id: America/Detroit
+      tasks:
+        - task_key: publish_department_report
+          notebook_task:
+            notebook_path: ../../../src/store_ops/notebooks/department_report/publish_department_report.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${resources.schemas.so_store_ops.name}
